@@ -3,270 +3,1286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Management System</title>
-    
-    <!-- Chakra UI CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@chakra-ui/cdn@2.3.0/dist/chakra.min.js"></script>
-    
-    <!-- DaisyUI and Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self'; connect-src 'self'; img-src 'self'; frame-src 'self';">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <title>API Endpoint Manager</title>
+    <!-- DaisyUI and Tailwind CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        .text-muted {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation Bar - Now with rounded corners */
+        .navbar {
+            background-color: #3182ce;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 1rem 1rem;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+            margin-bottom: 60px; /* Space for bottom menu */
+        }
+
+        /* Cards - Now with rounded corners */
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Buttons - Enhanced hover effects */
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, transform 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #3182ce;
+            border-color: #3182ce;
+        }
+
+        .btn-primary:hover {
+            background-color: #2b6cb0;
+            border-color: #2b6cb0;
+        }
+
+        .btn-secondary {
+            color: #fff;
+            background-color: #718096;
+            border-color: #718096;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4a5568;
+            border-color: #4a5568;
+        }
+
+        .btn-light {
+            color: #212529;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: transparent;
+        }
+
+        .btn-light:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-danger {
+            color: #fff;
+            background-color: #e53e3e;
+            border-color: #e53e3e;
+        }
+
+        .btn-danger:hover {
+            background-color: #c53030;
+            border-color: #c53030;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.375rem;
+        }
+
+        /* Tabs - Rounded corners */
+        .tabs {
+            margin-top: 2rem;
+        }
+
+        .tab-header {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 1rem;
+        }
+
+        .tab-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            border-radius: 0.5rem 0.5rem 0 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .tab-item:hover {
+            color: #3182ce;
+            background-color: rgba(49, 130, 206, 0.05);
+        }
+
+        .tab-item.active {
+            color: #3182ce;
+            border-bottom-color: #3182ce;
+            background-color: rgba(49, 130, 206, 0.1);
+        }
+
+        .tab-pane {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .tab-pane.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Tables - Rounded corners */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table th {
+            background-color: #f7fafc;
+            font-weight: 600;
+        }
+
+        .data-table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #f7fafc;
+        }
+
+        /* Badges - Rounded corners */
+        .badge {
+            display: inline-block;
+            padding: 0.25em 0.4em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge-success {
+            color: #fff;
+            background-color: #38a169;
+        }
+
+        .badge-danger {
+            color: #fff;
+            background-color: #e53e3e;
+        }
+
+        .badge-primary {
+            color: #fff;
+            background-color: #3182ce;
+        }
+
+        .badge-warning {
+            color: #fff;
+            background-color: #dd6b20;
+        }
+
+        .badge-info {
+            color: #fff;
+            background-color: #00b5d8;
+        }
+
+        /* Search Box - Rounded corners */
+        .search-box {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem 0 0 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 0.2rem rgba(49, 130, 206, 0.25);
+        }
+
+        .search-button {
+            padding: 0.5rem 1rem;
+            background-color: #3182ce;
+            color: white;
+            border: 1px solid #3182ce;
+            border-radius: 0 0.5rem 0.5rem 0;
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .search-button:hover {
+            background-color: #2b6cb0;
+        }
+
+        /* Bottom Menu - Rounded corners */
+        .bottom-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #3182ce;
+            color: white;
+            padding: 0.75rem 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        .bottom-menu .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .menu-item {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* Modal - Rounded corners */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .close-modal {
+            color: #aaa;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #333;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 1rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 0 0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* Notification - Rounded corners */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            width: 300px;
+            animation: notificationFadeIn 0.3s;
+        }
+
+        @keyframes notificationFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .notification-close:hover {
+            color: #333;
+            transform: rotate(90deg);
+        }
+
+        /* Notification Colors */
+        .notification-success {
+            border-left: 4px solid #38a169;
+            background-color: #f0fff4;
+        }
+
+        .notification-error {
+            border-left: 4px solid #e53e3e;
+            background-color: #fff5f5;
+        }
+
+        .notification-warning {
+            border-left: 4px solid #dd6b20;
+            background-color: #fffaf0;
+        }
+
+        .notification-info {
+            border-left: 4px solid #3182ce;
+            background-color: #ebf8ff;
+        }
+
+        /* Accordion - Rounded corners */
+        .accordion-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .accordion-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .accordion-header {
+            background-color: #f7fafc;
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0.75rem 0.75rem 0 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background-color: #edf2f7;
+        }
+
+        .accordion-content {
+            padding: 1rem;
+            display: none;
+            border-top: 1px solid #e2e8f0;
+            animation: accordionFadeIn 0.5s ease;
+        }
+
+        @keyframes accordionFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
+
+        /* Loading Spinner */
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #3182ce;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Code Block - Rounded corners */
+        .code-block {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        /* Scroll Animation Classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .zoom-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .zoom-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .tab-header {
+                flex-wrap: wrap;
+            }
+            
+            .tab-item {
+                flex: 1 0 auto;
+                text-align: center;
+                padding: 0.5rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .bottom-menu .container {
+                justify-content: space-around;
+            }
+            
+            .menu-item {
+                margin: 0;
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                border-radius: 0.5rem 0.5rem 0 0;
+            }
+            
+            .search-button {
+                border-radius: 0 0 0.5rem 0.5rem;
+            }
+        }
+
+        /* Security Alert */
+        .security-alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff5f5;
+            border-left: 4px solid #e53e3e;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <nav class="bg-base-200 shadow-lg">
-        <div class="container mx-auto px-6 py-3">
-            <div class="flex items-center justify-between">
-                <div class="text-xl font-bold">API Manager</div>
-                <div class="flex items-center space-x-4">
-                    <button class="btn btn-primary" onclick="showNotification('Welcome to API Manager!')">
-                        Notifications
-                    </button>
-                    <a href="admin.html" class="btn btn-secondary">Admin Panel</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <main class="container mx-auto px-6 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- API Endpoints List -->
-            <div id="endpoints-list" class="space-y-4">
-                <!-- Endpoints will be loaded here -->
-            </div>
-        </div>
-
-        <!-- Loading Spinner -->
-        <div id="loading" class="loading loading-spinner loading-lg"></div>
-    </main>
-
-    <!-- Bottom Menu -->
-    <div class="fixed bottom-0 left-0 right-0 bg-base-200 p-4">
-        <div class="flex justify-center space-x-6">
-            <button class="btn btn-ghost" onclick="refreshEndpoints()">Refresh</button>
-            <button class="btn btn-ghost" onclick="showStats()">Statistics</button>
-            <button class="btn btn-ghost" onclick="showSettings()">Settings</button>
-        </div>
+    <!-- Security Alert -->
+    <div id="security-alert" class="security-alert">
+        <div id="security-alert-message">Security issue detected!</div>
     </div>
 
-    <script src="script.js"></script>
-</body>
-</html>
-<script>
-    // Configuration and state management
-let config = {
-    websiteName: 'API Manager',
-    apiBaseUrl: 'https://jsonplaceholder.typicode.com', // Using JSONPlaceholder for demo
-    endpoints: [
-        {
-            id: '1',
-            name: 'Get Users',
-            url: 'https://jsonplaceholder.typicode.com/users',
-            method: 'GET',
-            status: 'Inactive'
-        },
-        {
-            id: '2',
-            name: 'Get Posts',
-            url: 'https://jsonplaceholder.typicode.com/posts',
-            method: 'GET',
-            status: 'Inactive'
-        },
-        {
-            id: '3',
-            name: 'Get Comments',
-            url: 'https://jsonplaceholder.typicode.com/comments',
-            method: 'GET',
-            status: 'Inactive'
-        },
-        {
-            id: '4',
-            name: 'Create Post',
-            url: 'https://jsonplaceholder.typicode.com/posts',
-            method: 'POST',
-            status: 'Inactive'
-        },
-        {
-            id: '5',
-            name: 'Update Post',
-            url: 'https://jsonplaceholder.typicode.com/posts/1',
-            method: 'PUT',
-            status: 'Inactive'
-        }
-    ]
-};
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="container">
+            <h1 id="website-name">API Endpoint Manager</h1>
+            <button class="btn btn-light" onclick="window.location.href='admin-login.html'">Admin Panel</button>
+        </div>
+    </header>
 
-// Load configuration from localStorage
-function loadConfig() {
-    const savedConfig = localStorage.getItem('apiManagerConfig');
-    if (savedConfig) {
-        config = JSON.parse(savedConfig);
-    }
-    updateUI();
-}
-
-// Save configuration to localStorage
-function saveConfig() {
-    localStorage.setItem('apiManagerConfig', JSON.stringify(config));
-}
-
-// Show Chakra UI notification
-function showNotification(message, type = 'info') {
-    // Wait for Chakra UI to be initialized
-    if (window.chakra && window.chakra.toast) {
-        window.chakra.toast({
-            title: message,
-            status: type,
-            duration: 3000,
-            isClosable: true,
-            position: 'top-right'
-        });
-    } else {
-        // Fallback to console log if Chakra UI is not available
-        console.log(`${type.toUpperCase()}: ${message}`);
-    }
-}
-
-// Update UI with endpoints
-function updateUI() {
-    const endpointsList = document.getElementById('endpoints-list');
-    endpointsList.innerHTML = '';
-
-    config.endpoints.forEach(endpoint => {
-        const card = document.createElement('div');
-        card.className = 'card bg-base-100 shadow-xl endpoint-card';
-        card.innerHTML = `
-            <div class="card-body">
-                <h2 class="card-title">${endpoint.name}</h2>
-                <p class="text-sm text-gray-600">${endpoint.url}</p>
-                <div class="flex items-center gap-2 mt-2">
-                    <span class="badge badge-${endpoint.method === 'GET' ? 'info' : endpoint.method === 'POST' ? 'success' : 'warning'}">${endpoint.method}</span>
-                    <span class="badge badge-${endpoint.status === 'Active' ? 'success' : 'error'}">${endpoint.status}</span>
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title fade-in">API Endpoints</h1>
+        
+        <!-- Search Box -->
+        <div class="search-box slide-in-left">
+            <input type="text" id="search-input" class="search-input" placeholder="Search endpoints...">
+            <button id="search-button" class="search-button">Search</button>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs fade-in">
+            <div class="tab-header">
+                <div class="tab-item active" data-tab="all-endpoints">All Endpoints</div>
+                <div class="tab-item" data-tab="documentation">Documentation</div>
+                <div class="tab-item" data-tab="settings">Settings</div>
+            </div>
+            
+            <div class="tab-content">
+                <!-- All Endpoints Tab -->
+                <div class="tab-pane active" id="all-endpoints">
+                    <div id="endpoints-loading" class="loading-container">
+                        <div class="loading-spinner"></div>
+                    </div>
+                    
+                    <div id="endpoints-table-container" class="slide-in-right" style="display: none;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Method</th>
+                                    <th>URL</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="endpoints-table-body">
+                                <!-- Endpoints will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="card-actions justify-end mt-4">
-                    <button class="btn btn-primary btn-sm" onclick="testEndpoint('${endpoint.id}')">
-                        Test
-                    </button>
+                
+                <!-- Documentation Tab -->
+                <div class="tab-pane" id="documentation">
+                    <h2 class="slide-in-left">API Documentation</h2>
+                    <div class="card zoom-in">
+                        <p>This documentation provides information about the available API endpoints and how to use them.</p>
+                        
+                        <div class="accordion" id="docs-accordion">
+                            <!-- Documentation items will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Tab -->
+                <div class="tab-pane" id="settings">
+                    <h2 class="slide-in-left">Settings</h2>
+                    <div class="card zoom-in">
+                        <h3>API Information</h3>
+                        <p id="api-info-name">Name: API Endpoint Manager</p>
+                        <p id="api-info-version">Version: 1.0.0</p>
+                        <p id="api-info-description">Description: Manage your API endpoints easily</p>
+                    </div>
                 </div>
             </div>
-        `;
-        endpointsList.appendChild(card);
-    });
-}
+        </div>
+    </main>
+    
+    <!-- Bottom Menu -->
+    <footer class="bottom-menu">
+        <div class="container">
+            <button class="menu-item">Endpoints</button>
+            <button class="menu-item">Documentation</button>
+            <button class="menu-item">Settings</button>
+        </div>
+    </footer>
+    
+    <!-- Endpoint Details Modal -->
+    <div class="modal" id="endpoint-details-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="endpoint-details-title">Endpoint Details</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="endpoint-details-content">
+                    <!-- Endpoint details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <span id="notification-message"></span>
+        </div>
+        <button class="notification-close">&times;</button>
+    </div>
+    
+    <script>
+        // DOM Elements
+        const tabItems = document.querySelectorAll('.tab-item');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        const endpointsTableBody = document.getElementById('endpoints-table-body');
+        const endpointsLoading = document.getElementById('endpoints-loading');
+        const endpointsTableContainer = document.getElementById('endpoints-table-container');
+        const docsAccordion = document.getElementById('docs-accordion');
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const endpointDetailsModal = document.getElementById('endpoint-details-modal');
+        const endpointDetailsTitle = document.getElementById('endpoint-details-title');
+        const endpointDetailsContent = document.getElementById('endpoint-details-content');
+        const closeModalBtn = document.querySelector('#endpoint-details-modal .close-modal');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+        const notificationCloseBtn = document.querySelector('#notification .notification-close');
+        const apiInfoName = document.getElementById('api-info-name');
+        const apiInfoVersion = document.getElementById('api-info-version');
+        const apiInfoDescription = document.getElementById('api-info-description');
+        const websiteName = document.getElementById('website-name');
+        const animatedElements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .zoom-in');
+        const securityAlert = document.getElementById('security-alert');
+        const securityAlertMessage = document.getElementById('security-alert-message');
 
-// Test endpoint
-async function testEndpoint(id) {
-    const endpoint = config.endpoints.find(e => e.id === id);
-    if (!endpoint) return;
+        // Data
+        let endpoints = [];
+        let filteredEndpoints = [];
+        let websiteInfo = {
+            name: 'API Endpoint Manager',
+            description: 'Manage your API endpoints easily',
+            version: '1.0.0'
+        };
 
-    showLoading();
-    try {
-        const response = await fetch(endpoint.url, {
-            method: endpoint.method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: endpoint.method !== 'GET' ? JSON.stringify({
-                title: 'Test Post',
-                body: 'This is a test post',
-                userId: 1
-            }) : undefined
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            setupEventListeners();
+            initScrollAnimation();
+            
+            // Add security check for admin access
+            document.querySelector('.navbar button').addEventListener('click', function(e) {
+                // Check if user is already authenticated
+                const sessionData = JSON.parse(localStorage.getItem('adminSession') || 'null');
+                
+                if (sessionData && sessionData.expires > Date.now() && sessionData.userAgent === navigator.userAgent) {
+                    // User is authenticated, redirect directly to admin panel
+                    e.preventDefault();
+                    window.location.href = 'admin.html';
+                }
+                // Otherwise, the default action will redirect to the login page
+            });
         });
-        
-        endpoint.status = response.ok ? 'Active' : 'Error';
-        showNotification(`Endpoint ${endpoint.name} tested successfully`, 'success');
-        
-        // Show response data
-        const data = await response.json();
-        console.log('Response:', data);
-    } catch (error) {
-        endpoint.status = 'Error';
-        showNotification(`Error testing endpoint ${endpoint.name}`, 'error');
-        console.error('Error:', error);
-    }
-    hideLoading();
-    saveConfig();
-    updateUI();
-}
 
-// Loading handlers
-function showLoading() {
-    document.getElementById('loading').style.display = 'flex';
-}
+        // Load Data
+        function loadData() {
+            // Load website info from localStorage
+            const storedInfo = localStorage.getItem('websiteInfo');
+            if (storedInfo) {
+                websiteInfo = JSON.parse(storedInfo);
+                updateWebsiteInfo();
+            }
+            
+            // Simulate loading endpoints
+            setTimeout(() => {
+                // Check if endpoints exist in localStorage
+                const storedEndpoints = localStorage.getItem('endpoints');
+                if (storedEndpoints) {
+                    endpoints = JSON.parse(storedEndpoints);
+                } else {
+                    // Sample data if none exists
+                    endpoints = [
+                        { id: 1, name: 'Get Users', method: 'GET', url: '/api/users', status: 'active', description: 'Retrieve all users' },
+                        { id: 2, name: 'Create User', method: 'POST', url: '/api/users', status: 'active', description: 'Create a new user' },
+                        { id: 3, name: 'Update User', method: 'PUT', url: '/api/users/:id', status: 'active', description: 'Update an existing user' },
+                        { id: 4, name: 'Delete User', method: 'DELETE', url: '/api/users/:id', status: 'inactive', description: 'Delete a user' },
+                        { id: 5, name: 'Get Products', method: 'GET', url: '/api/products', status: 'active', description: 'Retrieve all products' },
+                    ];
+                    localStorage.setItem('endpoints', JSON.stringify(endpoints));
+                }
+                
+                filteredEndpoints = [...endpoints];
+                renderEndpoints();
+                renderDocumentation();
+                endpointsLoading.style.display = 'none';
+                endpointsTableContainer.style.display = 'block';
+            }, 1000);
+        }
 
-function hideLoading() {
-    document.getElementById('loading').style.display = 'none';
-}
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Tab switching
+            tabItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const tabId = item.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabItems.forEach(tab => tab.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    // Show active tab content
+                    tabPanes.forEach(pane => pane.classList.remove('active'));
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Trigger animations for newly visible tab
+                    setTimeout(() => {
+                        checkScrollAnimation();
+                    }, 100);
+                });
+            });
+            
+            // Search functionality
+            searchButton.addEventListener('click', searchEndpoints);
+            searchInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    searchEndpoints();
+                }
+            });
+            
+            // Modal events
+            closeModalBtn.addEventListener('click', () => {
+                endpointDetailsModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === endpointDetailsModal) {
+                    endpointDetailsModal.style.display = 'none';
+                }
+            });
+            
+            // Notification close
+            notificationCloseBtn.addEventListener('click', () => {
+                notification.style.display = 'none';
+            });
+            
+            // Bottom menu
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    tabItems[index].click();
+                });
+            });
+            
+            // Scroll event for animations
+            window.addEventListener('scroll', checkScrollAnimation);
+        }
 
-// Bottom menu functions
-function refreshEndpoints() {
-    showLoading();
-    setTimeout(() => {
-        updateUI();
-        hideLoading();
-        showNotification('Endpoints refreshed', 'success');
-    }, 1000);
-}
+        // Initialize Scroll Animation
+        function initScrollAnimation() {
+            // Initial check for elements in viewport
+            checkScrollAnimation();
+            
+            // Add animation delay to stagger animations
+            animatedElements.forEach((element, index) => {
+                element.style.transitionDelay = `${index * 0.1}s`;
+            });
+        }
 
-function showStats() {
-    const activeEndpoints = config.endpoints.filter(e => e.status === 'Active').length;
-    showNotification(`Active endpoints: ${activeEndpoints}/${config.endpoints.length}`, 'info');
-}
+        // Check Scroll Animation
+        function checkScrollAnimation() {
+            animatedElements.forEach(element => {
+                if (isElementInViewport(element)) {
+                    element.classList.add('visible');
+                }
+            });
+        }
 
-function showSettings() {
-    window.location.href = 'admin.html';
-}
+        // Check if Element is in Viewport
+        function isElementInViewport(el) {
+            const rect = el.getBoundingClientRect();
+            return (
+                rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.9 &&
+                rect.bottom >= 0
+            );
+        }
 
-// Initialize after Chakra UI is loaded
-window.addEventListener('load', () => {
-    loadConfig();
-    hideLoading();
-});
-</script>
-<style>
-    /* Custom styles */
-.endpoint-card {
-    transition: all 0.3s ease;
-}
+        // Search Endpoints
+        function searchEndpoints() {
+            const searchTerm = sanitizeString(searchInput.value.trim().toLowerCase());
+            
+            if (searchTerm === '') {
+                filteredEndpoints = [...endpoints];
+            } else {
+                filteredEndpoints = endpoints.filter(endpoint => 
+                    endpoint.name.toLowerCase().includes(searchTerm) ||
+                    endpoint.url.toLowerCase().includes(searchTerm) ||
+                    endpoint.method.toLowerCase().includes(searchTerm) ||
+                    (endpoint.description && endpoint.description.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            renderEndpoints();
+        }
 
-.endpoint-card:hover {
-    transform: translateY(-2px);
-}
+        // Render Endpoints
+        function renderEndpoints() {
+            endpointsTableBody.innerHTML = '';
+            
+            if (filteredEndpoints.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="5" style="text-align: center;">No endpoints found</td>`;
+                endpointsTableBody.appendChild(row);
+                return;
+            }
+            
+            filteredEndpoints.forEach(endpoint => {
+                const row = document.createElement('tr');
+                row.className = 'fade-in';
+                
+                // Method badge class
+                let methodClass = '';
+                switch (endpoint.method) {
+                    case 'GET':
+                        methodClass = 'badge-success';
+                        break;
+                    case 'POST':
+                        methodClass = 'badge-primary';
+                        break;
+                    case 'PUT':
+                        methodClass = 'badge-warning';
+                        break;
+                    case 'DELETE':
+                        methodClass = 'badge-danger';
+                        break;
+                    default:
+                        methodClass = 'badge-info';
+                }
+                
+                row.innerHTML = `
+                    <td>${endpoint.name}</td>
+                    <td><span class="badge ${methodClass}">${endpoint.method}</span></td>
+                    <td>${endpoint.url}</td>
+                    <td><span class="badge ${endpoint.status === 'active' ? 'badge-success' : 'badge-danger'}">${endpoint.status}</span></td>
+                    <td>
+                        <button class="btn btn-primary btn-sm view-endpoint" data-id="${endpoint.id}">View</button>
+                    </td>
+                `;
+                
+                endpointsTableBody.appendChild(row);
+            });
+            
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-endpoint').forEach(button => {
+                button.addEventListener('click', () => {
+                    const id = parseInt(button.getAttribute('data-id'));
+                    viewEndpointDetails(id);
+                });
+            });
+            
+            // Trigger animations for newly added elements
+            setTimeout(() => {
+                checkScrollAnimation();
+            }, 100);
+        }
 
-/* Custom loading animation */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
+        // Render Documentation
+        function renderDocumentation() {
+            docsAccordion.innerHTML = '';
+            
+            endpoints.filter(endpoint => endpoint.status === 'active').forEach(endpoint => {
+                // Method badge class
+                let methodClass = '';
+                switch (endpoint.method) {
+                    case 'GET':
+                        methodClass = 'badge-success';
+                        break;
+                    case 'POST':
+                        methodClass = 'badge-primary';
+                        break;
+                    case 'PUT':
+                        methodClass = 'badge-warning';
+                        break;
+                    case 'DELETE':
+                        methodClass = 'badge-danger';
+                        break;
+                    default:
+                        methodClass = 'badge-info';
+                }
+                
+                const accordionItem = document.createElement('div');
+                accordionItem.className = 'accordion-item fade-in';
+                
+                accordionItem.innerHTML = `
+                    <div class="accordion-header" data-id="${endpoint.id}">
+                        <div>
+                            <span class="badge ${methodClass}">${endpoint.method}</span>
+                            ${endpoint.name} - ${endpoint.url}
+                        </div>
+                        <span>▼</span>
+                    </div>
+                    <div class="accordion-content" id="accordion-content-${endpoint.id}">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <p>${endpoint.description || 'No description available.'}</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Example Request</label>
+                            <div class="code-block">${getExampleCode(endpoint)}</div>
+                        </div>
+                    </div>
+                `;
+                
+                docsAccordion.appendChild(accordionItem);
+            });
+            
+            // Add event listeners to accordion headers
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const id = header.getAttribute('data-id');
+                    const content = document.getElementById(`accordion-content-${id}`);
+                    
+                    if (content.classList.contains('active')) {
+                        content.classList.remove('active');
+                        header.querySelector('span:last-child').textContent = '▼';
+                    } else {
+                        content.classList.add('active');
+                        header.querySelector('span:last-child').textContent = '▲';
+                    }
+                });
+            });
+            
+            // Trigger animations for newly added elements
+            setTimeout(() => {
+                checkScrollAnimation();
+            }, 100);
+        }
 
-/* Custom notification styles */
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    z-index: 1000;
-    animation: slideIn 0.3s ease;
-}
+        // Get Example Code
+        function getExampleCode(endpoint) {
+            if (endpoint.method === 'GET') {
+                return `fetch('${endpoint.url}')
+  .then(response => response.json())
+  .then(data => console.log(data));`;
+            } else {
+                return `fetch('${endpoint.url}', {
+  method: '${endpoint.method}',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    // request data here
+  })
+})
+  .then(response => response.json())
+  .then(data => console.log(data));`;
+            }
+        }
 
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-</style>
+        // View Endpoint Details
+        function viewEndpointDetails(id) {
+            const endpoint = endpoints.find(e => e.id === id);
+            if (endpoint) {
+                endpointDetailsTitle.textContent = `${endpoint.name} (${endpoint.method})`;
+                
+                // Method badge class
+                let methodClass = '';
+                switch (endpoint.method) {
+                    case 'GET':
+                        methodClass = 'badge-success';
+                        break;
+                    case 'POST':
+                        methodClass = 'badge-primary';
+                        break;
+                    case 'PUT':
+                        methodClass = 'badge-warning';
+                        break;
+                    case 'DELETE':
+                        methodClass = 'badge-danger';
+                        break;
+                    default:
+                        methodClass = 'badge-info';
+                }
+                
+                endpointDetailsContent.innerHTML = `
+                    <div class="form-group">
+                        <label>URL</label>
+                        <p>${endpoint.url}</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Method</label>
+                        <p><span class="badge ${methodClass}">${endpoint.method}</span></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Status</label>
+                        <p><span class="badge ${endpoint.status === 'active' ? 'badge-success' : 'badge-danger'}">${endpoint.status}</span></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Description</label>
+                        <p>${endpoint.description || 'No description available.'}</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Example Request</label>
+                        <div class="code-block">${getExampleCode(endpoint)}</div>
+                    </div>
+                `;
+                
+                endpointDetailsModal.style.display = 'block';
+            }
+        }
+
+        // Update Website Info
+        function updateWebsiteInfo() {
+            websiteName.textContent = websiteInfo.name;
+            apiInfoName.textContent = `Name: ${websiteInfo.name}`;
+            apiInfoVersion.textContent = `Version: ${websiteInfo.version}`;
+            apiInfoDescription.textContent = `Description: ${websiteInfo.description}`;
+            document.title = websiteInfo.name;
+        }
+
+        // Show Notification
+        function showNotification(message, type) {
+            notificationMessage.textContent = message;
+            
+            // Set notification color based on type
+            notification.className = 'notification';
+            switch (type) {
+                case 'success':
+                    notification.classList.add('notification-success');
+                    break;
+                case 'error':
+                    notification.classList.add('notification-error');
+                    break;
+                case 'warning':
+                    notification.classList.add('notification-warning');
+                    break;
+                default:
+                    notification.classList.add('notification-info');
+            }
+            
+            notification.style.display = 'block';
+            
+            // Auto hide after 3 seconds
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Show Security Alert
+        function showSecurityAlert(message) {
+            securityAlertMessage.textContent = message;
+            securityAlert.style.display = 'block';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                securityAlert.style.display = 'none';
+            }, 5000);
+        }
+
+        // Sanitize String (prevent XSS)
+        function sanitizeString(str) {
+            if (typeof str !== 'string') return str;
+            
+            // Replace potentially dangerous characters
+            return str.replace(/[<>&"']/g, function(c) {
+                return {
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '&': '&amp;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                }[c];
+            });
+        }
+    </script>
+</body>
+</html>
