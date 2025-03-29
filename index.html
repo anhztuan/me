@@ -1,1 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <section id="dashboard" class="animated fadeIn delay-1">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Ứng dụng Quản lý Học tập</div>
+                    <span class="status status-open">Mới</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Tiến độ</span>
+                        <span>25%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-value" style="width: 25%;"></div>
+                    </div>
+                </div>
+                <div style="margin: 15px 0;">
+                    <strong>Deadline:</strong> 30/05/2025
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                    <button class="btn btn-secondary">
+                        <span class="material-icons">visibility</span>
+                        Chi tiết
+                    </button>
+                    <div class="social-links">
+                        <a href="#" class="social-link github tooltip">
+                            <span class="material-icons">code</span>
+                            <span class="tooltip-text">GitHub Repo</span>
+                        </a>
+                        <a href="#" class="social-link twitter tooltip">
+                            <span class="material-icons">share</span>
+                            <span class="tooltip-text">Chia sẻ</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">API Documentation</div>
+                    <span class="status status-completed">Hoàn thành</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Tiến độ</span>
+                        <span>100%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-value" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div style="margin: 15px 0;">
+                    <strong>Hoàn thành:</strong> 15/03/2025
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                    <button class="btn btn-secondary">
+                        <span class="material-icons">visibility</span>
+                        Chi tiết
+                    </button>
+                    <div class="social-links">
+                        <a href="#" class="social-link github tooltip">
+                            <span class="material-icons">code</span>
+                            <span class="tooltip-text">GitHub Repo</span>
+                        </a>
+                        <a href="#" class="social-link twitter tooltip">
+                            <span class="material-icons">share</span>
+                            <span class="tooltip-text">Chia sẻ</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tasks" style="margin-top: 50px;" class="animated fadeIn delay-3">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>
+                    <span class="material-icons">assignment</span>
+                    Công việc cần làm
+                </h2>
+                <div>
+                    <button class="btn btn-secondary" style="margin-right: 10px;">
+                        <span class="material-icons">filter_list</span>
+                        Lọc
+                    </button>
+                    <button class="btn btn-primary">
+                        <span class="material-icons">add</span>
+                        Công việc mới
+                    </button>
+                </div>
+            </div>
+
+            <div class="tasks-list">
+                <div class="task-item">
+                    <div class="task-title">
+                        <span class="material-icons">code</span>
+                        <div>
+                            <div>Hoàn thiện tính năng authentication</div>
+                            <small style="color: var(--text-light);">Website Portfolio</small>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="status status-in-progress">Đang thực hiện</span>
+                        <span class="priority priority-high">
+                            <span class="material-icons">priority_high</span>
+                            Cao
+                        </span>
+                        <div class="tooltip">
+                            <span class="material-icons">schedule</span>
+                            <span class="tooltip-text">Deadline: 2025-04-01</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-title">
+                        <span class="material-icons">bug_report</span>
+                        <div>
+                            <div>Fix lỗi responsive trên mobile</div>
+                            <small style="color: var(--text-light);">Ứng dụng Quản lý Học tập</small>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="status status-open">Mới</span>
+                        <span class="priority priority-medium">
+                            <span class="material-icons">priority_high</span>
+                            Trung bình
+                        </span>
+                        <div class="tooltip">
+                            <span class="material-icons">schedule</span>
+                            <span class="tooltip-text">Deadline: 2025-04-05</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-title">
+                        <span class="material-icons">description</span>
+                        <div>
+                            <div>Viết documentation cho API endpoints</div>
+                            <small style="color: var(--text-light);">API Documentation</small>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="status status-completed">Hoàn thành</span>
+                        <span class="priority priority-low">
+                            <span class="material-icons">priority_high</span>
+                            Thấp
+                        </span>
+                        <div class="tooltip">
+                            <span class="material-icons">check_circle</span>
+                            <span class="tooltip-text">Hoàn thành: 2025-03-15</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal - Add New Task -->
+        <div class="modal" id="add-task-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Thêm công việc mới</h3>
+                    <button class="modal-close" id="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-task-form">
+                        <div class="form-group">
+                            <label class="form-label" for="task-name">Tên công việc</label>
+                            <input type="text" class="form-control" id="task-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="task-project">Dự án</label>
+                            <select class="form-select" id="task-project" required>
+                                <option value="">Chọn dự án</option>
+                                <option value="1">Website Portfolio</option>
+                                <option value="2">Ứng dụng Quản lý Học tập</option>
+                                <option value="3">API Documentation</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="task-priority">Độ ưu tiên</label>
+                            <select class="form-select" id="task-priority" required>
+                                <option value="high">Cao</option>
+                                <option value="medium">Trung bình</option>
+                                <option value="low">Thấp</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="task-deadline">Deadline</label>
+                            <input type="date" class="form-control" id="task-deadline" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="task-description">Mô tả</label>
+                            <textarea class="form-control" id="task-description" rows="4"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="cancel-task">Hủy</button>
+                    <button class="btn btn-primary" id="save-task">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">Về chúng tôi</h3>
+                    <p>GitHub Projects Tracker - Công cụ quản lý dự án và theo dõi thời gian học tập hiệu quả.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link github">
+                            <span class="material-icons">code</span>
+                        </a>
+                        <a href="#" class="social-link twitter">
+                            <span class="material-icons">alternate_email</span>
+                        </a>
+                        <a href="#" class="social-link facebook">
+                            <span class="material-icons">facebook</span>
+                        </a>
+                        <a href="#" class="social-link linkedin">
+                            <span class="material-icons">link</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Liên kết</h3>
+                    <ul class="footer-links">
+                        <li><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#projects">Dự án</a></li>
+                        <li><a href="#tasks">Công việc</a></li>
+                        <li><a href="#statistics">Thống kê</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 class="footer-title">Hỗ trợ</h3>
+                    <ul class="footer-links">
+                        <li><a href="#docs">Tài liệu</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#contact">Liên hệ</a></li>
+                        <li><a href="#privacy">Chính sách</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 GitHub Projects Tracker. Last updated: 2025-03-29 09:44:35 UTC by @anhztuan</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Utility functions
+        function formatNumber(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const formatted = `${now.getUTCFullYear()}-${formatNumber(now.getUTCMonth() + 1)}-${formatNumber(now.getUTCDate())} ${formatNumber(now.getUTCHours())}:${formatNumber(now.getUTCMinutes())}`;
+            document.querySelector('.footer-bottom p').textContent = `© 2025 GitHub Projects Tracker. Last updated: ${formatted} UTC by @anhztuan`;
+        }
+
+        // Update time every second
+        setInterval(updateDateTime, 1000);
+
+        // Profile dropdown functionality
+        const profileTrigger = document.getElementById('profile-trigger');
+        const profileDropdown = document.getElementById('profile-dropdown');
+
+        profileTrigger.addEventListener('click', () => {
+            profileDropdown.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!profileTrigger.contains(e.target) && !profileDropdown.contains(e.target)) {
+                profileDropdown.classList.remove('active');
+            }
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('add-task-modal');
+        const addTaskBtn = document.getElementById('add-task-btn');
+        const closeModal = document.getElementById('close-modal');
+        const cancelTask = document.getElementById('cancel-task');
+        const saveTask = document.getElementById('save-task');
+        const addTaskForm = document.getElementById('add-task-form');
+
+        function openModal() {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModalHandler() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            addTaskForm.reset();
+        }
+
+        addTaskBtn.addEventListener('click', openModal);
+        closeModal.addEventListener('click', closeModalHandler);
+        cancelTask.addEventListener('click', closeModalHandler);
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModalHandler();
+            }
+        });
+
+        // Handle form submission
+        saveTask.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (addTaskForm.checkValidity()) {
+                // TODO: Implement task saving logic
+                closeModalHandler();
+                // Show success notification
+                alert('Công việc đã được tạo thành công!');
+            } else {
+                addTaskForm.reportValidity();
+            }
+        });
+
+        // Dashboard animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const dashboardGrid = document.getElementById('dashboard-grid');
+            dashboardGrid.classList.add('fade-in');
+
+            // Animate counters
+            function animateCounter(element, target, duration = 2000) {
+                let start = 0;
+                const increment = target / (duration / 16);
+
+                function updateCounter() {
+                    start += increment;
+                    if (start >= target) {
+                        element.textContent = Math.round(target);
+                        return;
+                    }
+                    element.textContent = Math.round(start);
+                    requestAnimationFrame(updateCounter);
+                }
+
+                updateCounter();
+            }
+
+            // Initialize counters
+            animateCounter(document.getElementById('study-hours'), 24);
+            animateCounter(document.getElementById('total-tasks'), 15);
+            animateCounter(document.getElementById('completed-tasks'), 8);
+            animateCounter(document.getElementById('pending-tasks'), 7);
+
+            // Initialize progress bars
+            setTimeout(() => {
+                document.getElementById('study-progress').style.width = '75%';
+                document.getElementById('study-percentage').textContent = '75%';
+                document.getElementById('study-bar').style.width = '65%';
+                document.getElementById('rest-bar').style.width = '35%';
+                document.getElementById('task-progress').style.width = '53%';
+                document.getElementById('task-percentage').textContent = '53%';
+            }, 500);
+        });
+
+        // Time tracking functionality
+        let isTracking = false;
+        const trackTimeBtn = document.getElementById('track-time-btn');
+
+        trackTimeBtn.addEventListener('click', () => {
+            isTracking = !isTracking;
+            if (isTracking) {
+                trackTimeBtn.innerHTML = `
+                    <span class="material-icons">stop</span>
+                    Dừng ghi nhận
+                `;
+                trackTimeBtn.classList.add('btn-danger');
+            } else {
+                trackTimeBtn.innerHTML = `
+                    <span class="material-icons">play_arrow</span>
+                    Bắt đầu ghi nhận
+                `;
+                trackTimeBtn.classList.remove('btn-danger');
+            }
+        });
+
+        // Add smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Alt + N to open new task modal
+            if (e.altKey && e.key === 'n') {
+                e.preventDefault();
+                openModal();
+            }
+            // Esc to close modal
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModalHandler();
+            }
+        });
+
+        // Handle theme preference
+        function setThemePreference() {
+            const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+        }
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addListener(setThemePreference);
+
+        // Initialize tooltips
+        document.querySelectorAll('.tooltip').forEach(tooltip => {
+            const tooltipText = tooltip.querySelector('.tooltip-text');
+
+            tooltip.addEventListener('mousemove', (e) => {
+                if (tooltipText) {
+                    const viewportOffset = tooltipText.getBoundingClientRect();
+                    const top = e.clientY - 10;
+                    const left = e.clientX;
+                    tooltipText.style.top = `${Math.min(top, window.innerHeight - viewportOffset.height)}px`;
+                    tooltipText.style.left = `${Math.min(left, window.innerWidth - viewportOffset.width)}px`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
