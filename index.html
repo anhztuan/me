@@ -1,1288 +1,593 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self'; connect-src 'self'; img-src 'self'; frame-src 'self';">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    <title>API Endpoint Manager</title>
-    <!-- DaisyUI and Tailwind CSS via CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" type="text/css" />
+    <meta name="description" content="Kevin's APIs - A modern API management interface">
+    <meta name="keywords" content="API, management, dashboard, endpoints, documentation">
+    <title>Kevin's APIs</title>
+
+    <!-- Chakra UI -->
+    <script src="https://unpkg.com/@chakra-ui/react@2/dist/chakra-ui.min.js"></script>
+    <!-- DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.2/dist/full.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* Reset and Base Styles */
-        * {
+        /* Base Styles */
+        :root {
+            --primary: #4A90E2;
+            --secondary: #6C63FF;
+            --success: #2ECC71;
+            --error: #E74C3C;
+            --background: #F5F6FA;
+            --text: #2C3E50;
+        }
+
+        [data-theme='dark'] {
+            --background: #1A202C;
+            --text: #F5F6FA;
+        }
+
+        html {
+            height: 100%;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        /* Typography */
-        h1, h2, h3, h4, h5, h6 {
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            line-height: 1.2;
-        }
-
-        .page-title {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        p {
-            margin-bottom: 1rem;
-        }
-
-        .text-muted {
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-
-        /* Navigation Bar - Now with rounded corners */
-        .navbar {
-            background-color: #3182ce;
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 0 0 1rem 1rem;
-        }
-
-        .navbar .container {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar h1 {
-            font-size: 1.5rem;
+            flex-direction: column;
             margin: 0;
         }
 
-        /* Main Content */
-        main {
-            padding: 2rem 0;
-            margin-bottom: 60px; /* Space for bottom menu */
+        /* Content Container */
+        .content-container {
+            flex: 1 0 auto;
+            padding-bottom: 2rem;
+            min-height: calc(100vh - 60px);
         }
 
-        /* Cards - Now with rounded corners */
-        .card {
-            background-color: white;
-            border-radius: 1rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid #e2e8f0;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Buttons - Enhanced hover effects */
-        .btn {
-            display: inline-block;
-            font-weight: 400;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: middle;
-            user-select: none;
-            border: 1px solid transparent;
-            padding: 0.375rem 0.75rem;
-            font-size: 1rem;
-            line-height: 1.5;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, transform 0.3s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-primary {
-            color: #fff;
-            background-color: #3182ce;
-            border-color: #3182ce;
-        }
-
-        .btn-primary:hover {
-            background-color: #2b6cb0;
-            border-color: #2b6cb0;
-        }
-
-        .btn-secondary {
-            color: #fff;
-            background-color: #718096;
-            border-color: #718096;
-        }
-
-        .btn-secondary:hover {
-            background-color: #4a5568;
-            border-color: #4a5568;
-        }
-
-        .btn-light {
-            color: #212529;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: transparent;
-        }
-
-        .btn-light:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-danger {
-            color: #fff;
-            background-color: #e53e3e;
-            border-color: #e53e3e;
-        }
-
-        .btn-danger:hover {
-            background-color: #c53030;
-            border-color: #c53030;
-        }
-
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-            line-height: 1.5;
-            border-radius: 0.375rem;
-        }
-
-        /* Tabs - Rounded corners */
-        .tabs {
-            margin-top: 2rem;
-        }
-
-        .tab-header {
-            display: flex;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 1rem;
-        }
-
-        .tab-item {
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            font-weight: 500;
-            border-radius: 0.5rem 0.5rem 0 0;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .tab-item:hover {
-            color: #3182ce;
-            background-color: rgba(49, 130, 206, 0.05);
-        }
-
-        .tab-item.active {
-            color: #3182ce;
-            border-bottom-color: #3182ce;
-            background-color: rgba(49, 130, 206, 0.1);
-        }
-
-        .tab-pane {
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-
-        .tab-pane.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Tables - Rounded corners */
-        .data-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-bottom: 1rem;
-            border-radius: 0.5rem;
-            overflow: hidden;
-        }
-
-        .data-table th,
-        .data-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .data-table th {
-            background-color: #f7fafc;
-            font-weight: 600;
-        }
-
-        .data-table tbody tr {
-            transition: background-color 0.3s ease;
-        }
-
-        .data-table tbody tr:hover {
-            background-color: #f7fafc;
-        }
-
-        /* Badges - Rounded corners */
-        .badge {
-            display: inline-block;
-            padding: 0.25em 0.4em;
-            font-size: 75%;
-            font-weight: 700;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .badge-success {
-            color: #fff;
-            background-color: #38a169;
-        }
-
-        .badge-danger {
-            color: #fff;
-            background-color: #e53e3e;
-        }
-
-        .badge-primary {
-            color: #fff;
-            background-color: #3182ce;
-        }
-
-        .badge-warning {
-            color: #fff;
-            background-color: #dd6b20;
-        }
-
-        .badge-info {
-            color: #fff;
-            background-color: #00b5d8;
-        }
-
-        /* Search Box - Rounded corners */
-        .search-box {
-            display: flex;
-            margin-bottom: 1rem;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 0.5rem 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem 0 0 0.5rem;
-            font-size: 1rem;
-            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #3182ce;
-            box-shadow: 0 0 0 0.2rem rgba(49, 130, 206, 0.25);
-        }
-
-        .search-button {
-            padding: 0.5rem 1rem;
-            background-color: #3182ce;
-            color: white;
-            border: 1px solid #3182ce;
-            border-radius: 0 0.5rem 0.5rem 0;
-            cursor: pointer;
-            transition: background-color 0.15s ease-in-out;
-        }
-
-        .search-button:hover {
-            background-color: #2b6cb0;
-        }
-
-        /* Bottom Menu - Rounded corners */
-        .bottom-menu {
+        /* User Info Bar */
+        .user-info-bar {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #3182ce;
-            color: white;
-            padding: 0.75rem 0;
-            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-            border-radius: 1rem 1rem 0 0;
-        }
-
-        .bottom-menu .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .menu-item {
-            background: none;
-            border: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            margin: 0 0.5rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            border-radius: 0.5rem;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .menu-item:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-        }
-
-        /* Modal - Rounded corners */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
             top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(74, 144, 226, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(74, 144, 226, 0.2);
+        }
+
+        /* Loading Animation Styles */
+        .loading-circle {
+            width: 80px;
+            height: 80px;
+            position: relative;
+        }
+
+        .loading-circle::before,
+        .loading-circle::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 0;
-            border: 1px solid #e2e8f0;
-            border-radius: 1rem;
-            width: 80%;
-            max-width: 600px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            animation: modalFadeIn 0.3s;
-        }
-
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            padding: 1rem;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 1rem 1rem 0 0;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.25rem;
-        }
-
-        .close-modal {
-            color: #aaa;
-            font-size: 1.5rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.3s ease, transform 0.3s ease;
-        }
-
-        .close-modal:hover {
-            color: #333;
-            transform: rotate(90deg);
-        }
-
-        .modal-body {
-            padding: 1rem;
-        }
-
-        .modal-footer {
-            padding: 1rem 0 0;
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-        }
-
-        /* Notification - Rounded corners */
-        .notification {
-            display: none;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 1rem;
-            width: 300px;
-            animation: notificationFadeIn 0.3s;
-        }
-
-        @keyframes notificationFadeIn {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .notification-content {
-            display: flex;
-            align-items: center;
-        }
-
-        .notification-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: #aaa;
-            transition: color 0.3s ease, transform 0.3s ease;
-        }
-
-        .notification-close:hover {
-            color: #333;
-            transform: rotate(90deg);
-        }
-
-        /* Notification Colors */
-        .notification-success {
-            border-left: 4px solid #38a169;
-            background-color: #f0fff4;
-        }
-
-        .notification-error {
-            border-left: 4px solid #e53e3e;
-            background-color: #fff5f5;
-        }
-
-        .notification-warning {
-            border-left: 4px solid #dd6b20;
-            background-color: #fffaf0;
-        }
-
-        .notification-info {
-            border-left: 4px solid #3182ce;
-            background-color: #ebf8ff;
-        }
-
-        /* Accordion - Rounded corners */
-        .accordion-item {
-            border: 1px solid #e2e8f0;
-            border-radius: 0.75rem;
-            margin-bottom: 0.5rem;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .accordion-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .accordion-header {
-            background-color: #f7fafc;
-            padding: 1rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 0.75rem 0.75rem 0 0;
-            transition: background-color 0.3s ease;
-        }
-
-        .accordion-header:hover {
-            background-color: #edf2f7;
-        }
-
-        .accordion-content {
-            padding: 1rem;
-            display: none;
-            border-top: 1px solid #e2e8f0;
-            animation: accordionFadeIn 0.5s ease;
-        }
-
-        @keyframes accordionFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .accordion-content.active {
-            display: block;
-        }
-
-        /* Loading Spinner */
-        .loading-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-        }
-
-        .loading-spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
             border-radius: 50%;
-            border-top: 4px solid #3182ce;
-            width: 40px;
-            height: 40px;
+            border: 4px solid transparent;
+        }
+
+        .loading-circle::before {
+            border-top-color: white;
             animation: spin 1s linear infinite;
         }
 
+        .loading-circle::after {
+            border-right-color: white;
+            animation: spin 1s linear reverse infinite;
+        }
+
+        .loading-circle-inner {
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Loading Text */
+        .loading-text-container {
+            position: relative;
+            width: 200px;
+            height: 40px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .loading-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 500;
+            animation: scrollText 2s linear infinite;
+            white-space: nowrap;
+        }
+
+        /* Loading Page */
+        .loading-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #4A90E2, #6C63FF);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: white;
+            transition: width 5s linear;
+        }
+
+        /* Footer Styles */
+        .footer {
+            flex-shrink: 0;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem;
+            position: relative;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-nav a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .footer-nav a:hover {
+            opacity: 0.8;
+        }
+
+        .footer-version {
+            opacity: 0.75;
+            font-size: 0.875rem;
+        }
+
+        /* Mobile Responsive Footer */
+        @media (max-width: 640px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-nav {
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        /* Code Block - Rounded corners */
-        .code-block {
-            background-color: #f7fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            font-family: monospace;
-            white-space: pre;
-            overflow-x: auto;
-        }
-
-        /* Scroll Animation Classes */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .slide-in-left {
-            opacity: 0;
-            transform: translateX(-50px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .slide-in-left.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .slide-in-right {
-            opacity: 0;
-            transform: translateX(50px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .slide-in-right.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .zoom-in {
-            opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .zoom-in.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .tab-header {
-                flex-wrap: wrap;
+        @keyframes scrollText {
+            0% {
+                transform: translateY(100%);
+                opacity: 0;
             }
-            
-            .tab-item {
-                flex: 1 0 auto;
-                text-align: center;
-                padding: 0.5rem;
+            20% {
+                transform: translateY(0);
+                opacity: 1;
             }
-            
-            .modal-content {
-                width: 95%;
-                margin: 5% auto;
+            80% {
+                transform: translateY(0);
+                opacity: 1;
             }
-            
-            .data-table {
-                display: block;
-                overflow-x: auto;
-            }
-            
-            .bottom-menu .container {
-                justify-content: space-around;
-            }
-            
-            .menu-item {
-                margin: 0;
-                padding: 0.5rem;
+            100% {
+                transform: translateY(-100%);
+                opacity: 0;
             }
         }
 
-        @media (max-width: 480px) {
-            .search-box {
-                flex-direction: column;
-            }
-            
-            .search-input {
-                border-radius: 0.5rem 0.5rem 0 0;
-            }
-            
-            .search-button {
-                border-radius: 0 0 0.5rem 0.5rem;
-            }
-        }
-
-        /* Security Alert */
-        .security-alert {
+        /* Notification Styles */
+        .notification {
             position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #fff5f5;
-            border-left: 4px solid #e53e3e;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            top: 80px;
+            right: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 1000;
+            min-width: 300px;
+            max-width: 400px;
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--error);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* API Details Styles */
+        .api-details {
+            margin-top: 10px;
             display: none;
-            max-width: 90%;
-            width: 400px;
-            text-align: center;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+        }
+
+        .api-details.active {
+            display: block;
+        }
+
+        .api-details pre {
+            margin: 0;
+            padding: 15px;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .details-toggle {
+            width: 100%;
+            text-align: left;
+            padding: 8px 0;
+            color: var(--primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+
+        .details-toggle:hover {
+            color: var(--secondary);
+        }
+
+        .details-toggle svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s;
+        }
+
+        .details-toggle.active svg {
+            transform: rotate(180deg);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1rem;
+            transform-origin: center;
+        }
+
+        .card:hover {
+            transform: translateY(-5px) skew(-2deg);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
         }
     </style>
 </head>
 <body>
-    <!-- Security Alert -->
-    <div id="security-alert" class="security-alert">
-        <div id="security-alert-message">Security issue detected!</div>
+    <!-- User Info Bar -->
+    <div class="user-info-bar">
+        <div class="user-login">
+            Current User's Login: <span class="font-semibold">anhztuan</span>
+        </div>
+        <div class="current-time">
+            <span id="currentDateTime"></span>
+        </div>
     </div>
 
-    <!-- Navigation Bar -->
-    <header class="navbar">
-        <div class="container">
-            <h1 id="website-name">API Endpoint Manager</h1>
-            <button class="btn btn-light" onclick="window.location.href='admin-login.html'">Admin Panel</button>
+    <!-- Loading Page -->
+    <div class="loading-page" id="loadingPage">
+        <div class="loading-circle">
+            <div class="loading-circle-inner"></div>
         </div>
-    </header>
+        <div class="loading-text-container">
+            <div class="loading-text">Loading...</div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
+    </div>
 
     <!-- Main Content -->
-    <main class="container">
-        <h1 class="page-title fade-in">API Endpoints</h1>
-        
-        <!-- Search Box -->
-        <div class="search-box slide-in-left">
-            <input type="text" id="search-input" class="search-input" placeholder="Search endpoints...">
-            <button id="search-button" class="search-button">Search</button>
-        </div>
-        
-        <!-- Tabs -->
-        <div class="tabs fade-in">
-            <div class="tab-header">
-                <div class="tab-item active" data-tab="all-endpoints">All Endpoints</div>
-                <div class="tab-item" data-tab="documentation">Documentation</div>
-                <div class="tab-item" data-tab="settings">Settings</div>
+    <div class="content-container">
+        <div class="container mx-auto px-4 py-8 mt-16" id="mainContent" style="display: none;">
+            <header class="text-center mb-16">
+                <h1 class="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent" 
+                    id="mainHeading">
+                    Kevin's APIs
+                </h1>
+            </header>
+
+            <!-- Dark Mode Toggle -->
+            <div class="fixed top-20 right-4">
+                <button class="btn" id="darkModeToggle">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                        </path>
+                    </svg>
+                </button>
             </div>
-            
-            <div class="tab-content">
-                <!-- All Endpoints Tab -->
-                <div class="tab-pane active" id="all-endpoints">
-                    <div id="endpoints-loading" class="loading-container">
-                        <div class="loading-spinner"></div>
-                    </div>
-                    
-                    <div id="endpoints-table-container" class="slide-in-right" style="display: none;">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Method</th>
-                                    <th>URL</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="endpoints-table-body">
-                                <!-- Endpoints will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Documentation Tab -->
-                <div class="tab-pane" id="documentation">
-                    <h2 class="slide-in-left">API Documentation</h2>
-                    <div class="card zoom-in">
-                        <p>This documentation provides information about the available API endpoints and how to use them.</p>
-                        
-                        <div class="accordion" id="docs-accordion">
-                            <!-- Documentation items will be loaded here -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Settings Tab -->
-                <div class="tab-pane" id="settings">
-                    <h2 class="slide-in-left">Settings</h2>
-                    <div class="card zoom-in">
-                        <h3>API Information</h3>
-                        <p id="api-info-name">Name: API Endpoint Manager</p>
-                        <p id="api-info-version">Version: 1.0.0</p>
-                        <p id="api-info-description">Description: Manage your API endpoints easily</p>
-                    </div>
-                </div>
-            </div>
+
+            <!-- API Endpoints Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4" id="apiGrid"></div>
         </div>
-    </main>
-    
-    <!-- Bottom Menu -->
-    <footer class="bottom-menu">
-        <div class="container">
-            <button class="menu-item">Endpoints</button>
-            <button class="menu-item">Documentation</button>
-            <button class="menu-item">Settings</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="footer-content">
+            <nav class="footer-nav">
+                <a href="#">Home</a>
+                <a href="#">Documentation</a>
+                <a href="#">Support</a>
+            </nav>
+            <div class="footer-version">
+                Kevin's APIs - beta.0.1
+            </div>
         </div>
     </footer>
-    
-    <!-- Endpoint Details Modal -->
-    <div class="modal" id="endpoint-details-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="endpoint-details-title">Endpoint Details</h2>
-                <span class="close-modal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div id="endpoint-details-content">
-                    <!-- Endpoint details will be loaded here -->
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Notification -->
-    <div class="notification" id="notification">
-        <div class="notification-content">
-            <span id="notification-message"></span>
-        </div>
-        <button class="notification-close">&times;</button>
-    </div>
-    
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
     <script>
-        // DOM Elements
-        const tabItems = document.querySelectorAll('.tab-item');
-        const tabPanes = document.querySelectorAll('.tab-pane');
-        const endpointsTableBody = document.getElementById('endpoints-table-body');
-        const endpointsLoading = document.getElementById('endpoints-loading');
-        const endpointsTableContainer = document.getElementById('endpoints-table-container');
-        const docsAccordion = document.getElementById('docs-accordion');
-        const searchInput = document.getElementById('search-input');
-        const searchButton = document.getElementById('search-button');
-        const endpointDetailsModal = document.getElementById('endpoint-details-modal');
-        const endpointDetailsTitle = document.getElementById('endpoint-details-title');
-        const endpointDetailsContent = document.getElementById('endpoint-details-content');
-        const closeModalBtn = document.querySelector('#endpoint-details-modal .close-modal');
-        const notification = document.getElementById('notification');
-        const notificationMessage = document.getElementById('notification-message');
-        const notificationCloseBtn = document.querySelector('#notification .notification-close');
-        const apiInfoName = document.getElementById('api-info-name');
-        const apiInfoVersion = document.getElementById('api-info-version');
-        const apiInfoDescription = document.getElementById('api-info-description');
-        const websiteName = document.getElementById('website-name');
-        const animatedElements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .zoom-in');
-        const securityAlert = document.getElementById('security-alert');
-        const securityAlertMessage = document.getElementById('security-alert-message');
-
-        // Data
-        let endpoints = [];
-        let filteredEndpoints = [];
-        let websiteInfo = {
-            name: 'API Endpoint Manager',
-            description: 'Manage your API endpoints easily',
-            version: '1.0.0'
-        };
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-            setupEventListeners();
-            initScrollAnimation();
+        // Update DateTime
+        function updateDateTime() {
+            const now = new Date();
+            const formatted = `Current Date and Time (UTC - YYYY-MM-DD HH:MM:SS formatted): ${
+                now.getUTCFullYear()}-${
+                String(now.getUTCMonth() + 1).padStart(2, '0')}-${
+                String(now.getUTCDate()).padStart(2, '0')} ${
+                String(now.getUTCHours()).padStart(2, '0')}:${
+                String(now.getUTCMinutes()).padStart(2, '0')}:${
+                String(now.getUTCSeconds()).padStart(2, '0')}`;
             
-            // Add security check for admin access
-            document.querySelector('.navbar button').addEventListener('click', function(e) {
-                // Check if user is already authenticated
-                const sessionData = JSON.parse(localStorage.getItem('adminSession') || 'null');
-                
-                if (sessionData && sessionData.expires > Date.now() && sessionData.userAgent === navigator.userAgent) {
-                    // User is authenticated, redirect directly to admin panel
-                    e.preventDefault();
-                    window.location.href = 'admin.html';
-                }
-                // Otherwise, the default action will redirect to the login page
-            });
+            document.getElementById('currentDateTime').textContent = formatted;
+        }
+
+        setInterval(updateDateTime, 1000);
+        updateDateTime(); // Initial update
+
+        // Loading Page Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const progressBarFill = document.getElementById('progressBarFill');
+            const loadingPage = document.getElementById('loadingPage');
+            const mainContent = document.getElementById('mainContent');
+            
+            const loadingTexts = ['Loading', 'Loading.', 'Loading..', 'Loading...'];
+            let currentTextIndex = 0;
+
+            function updateLoadingText() {
+                const textElement = document.querySelector('.loading-text');
+                textElement.textContent = loadingTexts[currentTextIndex];
+                currentTextIndex = (currentTextIndex + 1) % loadingTexts.length;
+            }
+
+            const textInterval = setInterval(updateLoadingText, 500);
+
+            progressBarFill.style.width = '100%';
+
+            setTimeout(() => {
+                clearInterval(textInterval);
+                loadingPage.style.opacity = '0';
+                loadingPage.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    loadingPage.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    generateAPICards();
+                }, 500);
+            }, 5000);
         });
 
-        // Load Data
-        function loadData() {
-            // Load website info from localStorage
-            const storedInfo = localStorage.getItem('websiteInfo');
-            if (storedInfo) {
-                websiteInfo = JSON.parse(storedInfo);
-                updateWebsiteInfo();
-            }
-            
-            // Simulate loading endpoints
-            setTimeout(() => {
-                // Check if endpoints exist in localStorage
-                const storedEndpoints = localStorage.getItem('endpoints');
-                if (storedEndpoints) {
-                    endpoints = JSON.parse(storedEndpoints);
-                } else {
-                    // Sample data if none exists
-                    endpoints = [
-                        { id: 1, name: 'Get Users', method: 'GET', url: '/api/users', status: 'active', description: 'Retrieve all users' },
-                        { id: 2, name: 'Create User', method: 'POST', url: '/api/users', status: 'active', description: 'Create a new user' },
-                        { id: 3, name: 'Update User', method: 'PUT', url: '/api/users/:id', status: 'active', description: 'Update an existing user' },
-                        { id: 4, name: 'Delete User', method: 'DELETE', url: '/api/users/:id', status: 'inactive', description: 'Delete a user' },
-                        { id: 5, name: 'Get Products', method: 'GET', url: '/api/products', status: 'active', description: 'Retrieve all products' },
-                    ];
-                    localStorage.setItem('endpoints', JSON.stringify(endpoints));
-                }
-                
-                filteredEndpoints = [...endpoints];
-                renderEndpoints();
-                renderDocumentation();
-                endpointsLoading.style.display = 'none';
-                endpointsTableContainer.style.display = 'block';
-            }, 1000);
-        }
-
-        // Setup Event Listeners
-        function setupEventListeners() {
-            // Tab switching
-            tabItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const tabId = item.getAttribute('data-tab');
-                    
-                    // Update active tab
-                    tabItems.forEach(tab => tab.classList.remove('active'));
-                    item.classList.add('active');
-                    
-                    // Show active tab content
-                    tabPanes.forEach(pane => pane.classList.remove('active'));
-                    document.getElementById(tabId).classList.add('active');
-                    
-                    // Trigger animations for newly visible tab
-                    setTimeout(() => {
-                        checkScrollAnimation();
-                    }, 100);
-                });
-            });
-            
-            // Search functionality
-            searchButton.addEventListener('click', searchEndpoints);
-            searchInput.addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') {
-                    searchEndpoints();
-                }
-            });
-            
-            // Modal events
-            closeModalBtn.addEventListener('click', () => {
-                endpointDetailsModal.style.display = 'none';
-            });
-            
-            // Close modal when clicking outside
-            window.addEventListener('click', (e) => {
-                if (e.target === endpointDetailsModal) {
-                    endpointDetailsModal.style.display = 'none';
-                }
-            });
-            
-            // Notification close
-            notificationCloseBtn.addEventListener('click', () => {
-                notification.style.display = 'none';
-            });
-            
-            // Bottom menu
-            const menuItems = document.querySelectorAll('.menu-item');
-            menuItems.forEach((item, index) => {
-                item.addEventListener('click', () => {
-                    tabItems[index].click();
-                });
-            });
-            
-            // Scroll event for animations
-            window.addEventListener('scroll', checkScrollAnimation);
-        }
-
-        // Initialize Scroll Animation
-        function initScrollAnimation() {
-            // Initial check for elements in viewport
-            checkScrollAnimation();
-            
-            // Add animation delay to stagger animations
-            animatedElements.forEach((element, index) => {
-                element.style.transitionDelay = `${index * 0.1}s`;
-            });
-        }
-
-        // Check Scroll Animation
-        function checkScrollAnimation() {
-            animatedElements.forEach(element => {
-                if (isElementInViewport(element)) {
-                    element.classList.add('visible');
-                }
-            });
-        }
-
-        // Check if Element is in Viewport
-        function isElementInViewport(el) {
-            const rect = el.getBoundingClientRect();
-            return (
-                rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.9 &&
-                rect.bottom >= 0
-            );
-        }
-
-        // Search Endpoints
-        function searchEndpoints() {
-            const searchTerm = sanitizeString(searchInput.value.trim().toLowerCase());
-            
-            if (searchTerm === '') {
-                filteredEndpoints = [...endpoints];
-            } else {
-                filteredEndpoints = endpoints.filter(endpoint => 
-                    endpoint.name.toLowerCase().includes(searchTerm) ||
-                    endpoint.url.toLowerCase().includes(searchTerm) ||
-                    endpoint.method.toLowerCase().includes(searchTerm) ||
-                    (endpoint.description && endpoint.description.toLowerCase().includes(searchTerm))
-                );
-            }
-            
-            renderEndpoints();
-        }
-
-        // Render Endpoints
-        function renderEndpoints() {
-            endpointsTableBody.innerHTML = '';
-            
-            if (filteredEndpoints.length === 0) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td colspan="5" style="text-align: center;">No endpoints found</td>`;
-                endpointsTableBody.appendChild(row);
-                return;
-            }
-            
-            filteredEndpoints.forEach(endpoint => {
-                const row = document.createElement('tr');
-                row.className = 'fade-in';
-                
-                // Method badge class
-                let methodClass = '';
-                switch (endpoint.method) {
-                    case 'GET':
-                        methodClass = 'badge-success';
-                        break;
-                    case 'POST':
-                        methodClass = 'badge-primary';
-                        break;
-                    case 'PUT':
-                        methodClass = 'badge-warning';
-                        break;
-                    case 'DELETE':
-                        methodClass = 'badge-danger';
-                        break;
-                    default:
-                        methodClass = 'badge-info';
-                }
-                
-                row.innerHTML = `
-                    <td>${endpoint.name}</td>
-                    <td><span class="badge ${methodClass}">${endpoint.method}</span></td>
-                    <td>${endpoint.url}</td>
-                    <td><span class="badge ${endpoint.status === 'active' ? 'badge-success' : 'badge-danger'}">${endpoint.status}</span></td>
-                    <td>
-                        <button class="btn btn-primary btn-sm view-endpoint" data-id="${endpoint.id}">View</button>
-                    </td>
-                `;
-                
-                endpointsTableBody.appendChild(row);
-            });
-            
-            // Add event listeners to view buttons
-            document.querySelectorAll('.view-endpoint').forEach(button => {
-                button.addEventListener('click', () => {
-                    const id = parseInt(button.getAttribute('data-id'));
-                    viewEndpointDetails(id);
-                });
-            });
-            
-            // Trigger animations for newly added elements
-            setTimeout(() => {
-                checkScrollAnimation();
-            }, 100);
-        }
-
-        // Render Documentation
-        function renderDocumentation() {
-            docsAccordion.innerHTML = '';
-            
-            endpoints.filter(endpoint => endpoint.status === 'active').forEach(endpoint => {
-                // Method badge class
-                let methodClass = '';
-                switch (endpoint.method) {
-                    case 'GET':
-                        methodClass = 'badge-success';
-                        break;
-                    case 'POST':
-                        methodClass = 'badge-primary';
-                        break;
-                    case 'PUT':
-                        methodClass = 'badge-warning';
-                        break;
-                    case 'DELETE':
-                        methodClass = 'badge-danger';
-                        break;
-                    default:
-                        methodClass = 'badge-info';
-                }
-                
-                const accordionItem = document.createElement('div');
-                accordionItem.className = 'accordion-item fade-in';
-                
-                accordionItem.innerHTML = `
-                    <div class="accordion-header" data-id="${endpoint.id}">
-                        <div>
-                            <span class="badge ${methodClass}">${endpoint.method}</span>
-                            ${endpoint.name} - ${endpoint.url}
-                        </div>
-                        <span>▼</span>
-                    </div>
-                    <div class="accordion-content" id="accordion-content-${endpoint.id}">
-                        <div class="form-group">
-                            <label>Description</label>
-                            <p>${endpoint.description || 'No description available.'}</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Example Request</label>
-                            <div class="code-block">${getExampleCode(endpoint)}</div>
-                        </div>
-                    </div>
-                `;
-                
-                docsAccordion.appendChild(accordionItem);
-            });
-            
-            // Add event listeners to accordion headers
-            document.querySelectorAll('.accordion-header').forEach(header => {
-                header.addEventListener('click', () => {
-                    const id = header.getAttribute('data-id');
-                    const content = document.getElementById(`accordion-content-${id}`);
-                    
-                    if (content.classList.contains('active')) {
-                        content.classList.remove('active');
-                        header.querySelector('span:last-child').textContent = '▼';
-                    } else {
-                        content.classList.add('active');
-                        header.querySelector('span:last-child').textContent = '▲';
+        // Generate API Cards
+        function generateAPICards() {
+            const apiData = [
+                {
+                    title: 'User Authentication',
+                    description: 'Handle user authentication',
+                    method: 'POST',
+                    color: 'green',
+                    url: '/api/v1/auth',
+                    params: {
+                        username: 'string',
+                        password: 'string'
+                    },
+                    headers: {
+                        'Content-Type': 'application/json'
                     }
-                });
-            });
-            
-            // Trigger animations for newly added elements
-            setTimeout(() => {
-                checkScrollAnimation();
-            }, 100);
-        }
-
-        // Get Example Code
-        function getExampleCode(endpoint) {
-            if (endpoint.method === 'GET') {
-                return `fetch('${endpoint.url}')
-  .then(response => response.json())
-  .then(data => console.log(data));`;
-            } else {
-                return `fetch('${endpoint.url}', {
-  method: '${endpoint.method}',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    // request data here
-  })
-})
-  .then(response => response.json())
-  .then(data => console.log(data));`;
-            }
-        }
-
-        // View Endpoint Details
-        function viewEndpointDetails(id) {
-            const endpoint = endpoints.find(e => e.id === id);
-            if (endpoint) {
-                endpointDetailsTitle.textContent = `${endpoint.name} (${endpoint.method})`;
-                
-                // Method badge class
-                let methodClass = '';
-                switch (endpoint.method) {
-                    case 'GET':
-                        methodClass = 'badge-success';
-                        break;
-                    case 'POST':
-                        methodClass = 'badge-primary';
-                        break;
-                    case 'PUT':
-                        methodClass = 'badge-warning';
-                        break;
-                    case 'DELETE':
-                        methodClass = 'badge-danger';
-                        break;
-                    default:
-                        methodClass = 'badge-info';
+                },
+                {
+                    title: 'Get User Profile',
+                    description: 'Retrieve user information',
+                    method: 'GET',
+                    color: 'blue',
+                    url: '/api/v1/user/profile',
+                    headers: {
+                        'Authorization': 'Bearer <token>'
+                    }
                 }
-                
-                endpointDetailsContent.innerHTML = `
-                    <div class="form-group">
-                        <label>URL</label>
-                        <p>${endpoint.url}</p>
+            ];
+
+            const container = document.getElementById('apiGrid');
+            container.innerHTML = apiData.map((api, index) => `
+                <div class="card">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">${api.title}</h3>
+                        <p class="text-sm mb-4 text-opacity-90">${api.description}</p>
+                        
+                        <button class="details-toggle" onclick="toggleDetails(event, ${index})">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                            API Details
+                        </button>
+                        
+                        <div class="api-details" id="details-${index}">
+                            <pre>URL: ${api.url}
+Method: ${api.method}
+Headers: ${JSON.stringify(api.headers, null, 2)}
+${api.params ? `Parameters: ${JSON.stringify(api.params, null, 2)}` : ''}</pre>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label>Method</label>
-                        <p><span class="badge ${methodClass}">${endpoint.method}</span></p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-xs bg-${api.color}-500 text-white px-2 py-1 rounded">${api.method}</span>
+                        <button class="btn btn-sm" onclick="testAPI('${api.title}')">Test API</button>
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Status</label>
-                        <p><span class="badge ${endpoint.status === 'active' ? 'badge-success' : 'badge-danger'}">${endpoint.status}</span></p>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Description</label>
-                        <p>${endpoint.description || 'No description available.'}</p>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Example Request</label>
-                        <div class="code-block">${getExampleCode(endpoint)}</div>
-                    </div>
-                `;
-                
-                endpointDetailsModal.style.display = 'block';
-            }
+                </div>
+            `).join('');
         }
 
-        // Update Website Info
-        function updateWebsiteInfo() {
-            websiteName.textContent = websiteInfo.name;
-            apiInfoName.textContent = `Name: ${websiteInfo.name}`;
-            apiInfoVersion.textContent = `Version: ${websiteInfo.version}`;
-            apiInfoDescription.textContent = `Description: ${websiteInfo.description}`;
-            document.title = websiteInfo.name;
+        // Toggle API Details
+        function toggleDetails(event, index) {
+            const button = event.currentTarget;
+            const details = document.getElementById(`details-${index}`);
+            
+            // Toggle active class
+            button.classList.toggle('active');
+            details.classList.toggle('active');
         }
 
         // Show Notification
-        function showNotification(message, type) {
-            notificationMessage.textContent = message;
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
             
-            // Set notification color based on type
-            notification.className = 'notification';
-            switch (type) {
-                case 'success':
-                    notification.classList.add('notification-success');
-                    break;
-                case 'error':
-                    notification.classList.add('notification-error');
-                    break;
-                case 'warning':
-                    notification.classList.add('notification-warning');
-                    break;
-                default:
-                    notification.classList.add('notification-info');
-            }
+            const title = type === 'success' ? 'Success' : 'Error';
+            const icon = type === 'success' 
+                ? '<svg class="w-5 h-5" fill="none" stroke="#2ECC71" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
+                : '<svg class="w-5 h-5" fill="none" stroke="#E74C3C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
             
-            notification.style.display = 'block';
+            notification.innerHTML = `
+                ${icon}
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+            `;
             
-            // Auto hide after 3 seconds
+            document.getElementById('notificationContainer').appendChild(notification);
+            setTimeout(() => notification.classList.add('show'), 100);
             setTimeout(() => {
-                notification.style.display = 'none';
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
 
-        // Show Security Alert
-        function showSecurityAlert(message) {
-            securityAlertMessage.textContent = message;
-            securityAlert.style.display = 'block';
-            
-            // Auto hide after 5 seconds
-            setTimeout(() => {
-                securityAlert.style.display = 'none';
-            }, 5000);
+        // Test API Function
+        function testAPI(apiName) {
+            showNotification(`Testing ${apiName}...`, 'success');
         }
 
-        // Sanitize String (prevent XSS)
-        function sanitizeString(str) {
-            if (typeof str !== 'string') return str;
-            
-            // Replace potentially dangerous characters
-            return str.replace(/[<>&"']/g, function(c) {
-                return {
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '&': '&amp;',
-                    '"': '&quot;',
-                    "'": '&#39;'
-                }[c];
-            });
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const html = document.documentElement;
+        
+        if (localStorage.getItem('darkMode') === 'true') {
+            html.setAttribute('data-theme', 'dark');
         }
+
+        darkModeToggle.addEventListener('click', () => {
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('darkMode', !isDark);
+            showNotification(isDark ? 'Light mode enabled' : 'Dark mode enabled', 'success');
+        });
     </script>
 </body>
 </html>
