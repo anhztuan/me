@@ -1,64 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <!-- Chakra UI -->
-  <link href="https://cdn.jsdelivr.net/npm/@chakra-ui/core@1.0.0/dist/chakra-ui.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@chakra-ui/react@1.0.0/dist/chakra-ui-react.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/framer-motion@4.1.17/dist/framer-motion.umd.js"></script>
-
-  <!-- DaisyUI -->
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.5.1/dist/full.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Manager - Admin Panel</title>
+    
+    <!-- Chakra UI via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@chakra-ui/system@2.5.7/dist/chakra-ui-system.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@chakra-ui/react@2.8.0/dist/chakra-ui-react.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/framer-motion@10.16.4/dist/framer-motion.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emotion/react@11.11.1/dist/emotion-react.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emotion/styled@11.11.0/dist/emotion-styled.min.js"></script>
+    
+    <!-- DaisyUI for loading animations -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.2/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
 </head>
+<body>
+    <div id="admin-app"></div>
 
-<div id="negative-bar" class="hidden fixed top-0 left-0 right-0 bg-red-500 text-white text-center py-2">
-  Warning: An error occurred while processing your request.
-</div>
-<script>
-  function showNegativeBar(message) {
-    const negativeBar = document.getElementById('negative-bar');
-    negativeBar.textContent = message;
-    negativeBar.classList.remove('hidden');
-    setTimeout(() => negativeBar.classList.add('hidden'), 5000); // Hide after 5 seconds
-}
-</script>
-<nav class="bg-gray-900 text-white p-4">
-  <ul class="flex gap-4 justify-center">
-      <li><a href="#dashboard" class="hover:text-blue-400">Dashboard</a></li>
-      <li><a href="#edit-api" class="hover:text-blue-400">Edit API</a></li>
-      <li><a href="#settings" class="hover:text-blue-400">Settings</a></li>
-  </ul>
-</nav>
-<section id="web-info" class="p-4">
-  <h2 class="text-2xl font-bold mb-4">Website Information</h2>
-  <form id="web-info-form" class="flex flex-col gap-4">
-      <input type="text" id="site-name" placeholder="Site Name" class="input input-bordered">
-      <input type="text" id="site-description" placeholder="Site Description" class="input input-bordered">
-      <button type="submit" class="btn btn-primary">Save Changes</button>
-  </form>
-</section>
-<script>
-  document.getElementById('web-info-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const siteName = document.getElementById('site-name').value.trim();
-    const siteDescription = document.getElementById('site-description').value.trim();
+    <script type="text/babel">
+        const {
+            ChakraProvider,
+            Box,
+            Flex,
+            Heading,
+            Text,
+            Button,
+            Input,
+            Textarea,
+            Select,
+            Table,
+            Thead,
+            Tbody,
+            Tr,
+            Th,
+            Td,
+            Modal,
+            ModalOverlay,
+            ModalContent,
+            ModalHeader,
+            ModalFooter,
+            ModalBody,
+            ModalCloseButton,
+            useDisclosure,
+            FormControl,
+            FormLabel,
+            useToast,
+            Tabs,
+            TabList,
+            TabPanels,
+            Tab,
+            TabPanel,
+            Badge,
+            Menu,
+            MenuButton,
+            MenuList,
+            MenuItem,
+            IconButton,
+            Tooltip,
+            Drawer,
+            DrawerBody,
+            DrawerFooter,
+            DrawerHeader,
+            DrawerOverlay,
+            DrawerContent,
+            DrawerCloseButton,
+            Switch,
+            Code,
+            Accordion,
+            AccordionItem,
+            AccordionButton,
+            AccordionPanel,
+            AccordionIcon,
+        } = ChakraUI;
 
-    if (!siteName || !siteDescription) {
-        showNegativeBar("Please fill in all fields.");
-        return;
-    }
+        const { useState, useEffect } = React;
 
-    // Save changes (you can use localStorage or send to backend)
-    localStorage.setItem('siteName', siteName);
-    localStorage.setItem('siteDescription', siteDescription);
+        // Admin App Component
+        function AdminApp() {
+            const [endpoints, setEndpoints] = useState([]);
+            const [websiteInfo, setWebsiteInfo] = useState({
+                name: 'API Endpoint Manager',
+                description: 'Manage your API endpoints easily',
+                version: '1.0.0'
+            });
+            const [isLoading, setIsLoading] = useState(true);
+            const [editingEndpoint, setEditingEndpoint] = useState(null);
+            const { isOpen, onOpen, onClose } = useDisclosure();
+            const toast = useToast();
+            
+            // Simulate loading data
+            useEffect(() => {
+                // Simulate API call to get endpoints
+                setTimeout(() => {
+                    const sampleEndpoints = [
+                        { id: 1, name: 'Get Users', method: 'GET', url: '/api/users', status: 'active', description: 'Retrieve all users' },
+                        { id: 2, name: 'Create User', method: 'POST', url: '/api/users', status: 'active', description: 'Create a new user' },
+                        { id: 3, name: 'Update User', method: 'PUT', url: '/api/users/:id', status: 'active', description: 'Update an existing user' },
+                        { id: 4, name: 'Delete User', method: 'DELETE', url: '/api/users/:id', status: 'inactive', description: 'Delete a user' },
+                        { id: 5, name: 'Get Products', method: 'GET', url: '/api/products', status: 'active', description: 'Retrieve all products' },
+                    ];
+                    setEndpoints(sampleEndpoints);
+                    setIsLoading(false);
+                }, 1500);
+                
+                // Get website info from localStorage or default
+                const storedInfo = localStorage.getItem('websiteInfo');
+                if (storedInfo) {
+                    setWebsiteInfo(JSON.parse(storedInfo));
+                }
+            }, []);
+            
+            // Save website info
+            const saveWebsiteInfo = () => {
+                localStorage.setItem('websiteInfo', JSON.stringify(websiteInfo));
+                toast({
+                    title: "Website information updated.",
+                    description: "Your changes have been saved successfully.",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+            };
+            
+            // Update website info
+            const updateWebsiteInfo = (field, value) => {
+                setWebsiteInfo({
+                    ...websiteInfo,
+                    [field]: value
+                });
+            };
+            
+            // Add new endpoint
+            const addEndpoint = (endpoint) => {
+                const newEndpoint = {
+                    id: endpoints.length + 1,
+                    ...endpoint
+                };
+                setEndpoints([...endpoints, newEndpoint]);
+                toast({
+                    title: "Endpoint added.",
+                    description: `${endpoint.name} has been added successfully.`,
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+            };
+            
+            // Update endpoint
+            const updateEndpoint = (updatedEndpoint) => {
+                setEndpoints(endpoints.map(endpoint => 
+                    endpoint.id === updatedEndpoint.id ? updatedEndpoint : endpoint
+                ));
+                toast({
+                    title: "Endpoint updated.",
+                    description: `${updatedEndpoint.name} has been updated successfully.`,
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+                setEditingEndpoint(null);
+            };
+            
+            // Delete endpoint
+            const deleteEndpoint = (id) => {
+                setEndpoints(endpoints.filter(endpoint => endpoint.id !== id));
+                toast({
+                    title: "Endpoint deleted.",
+                    description: "The endpoint has been deleted successfully.",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
+            };
+            
+            // Toggle endpoint status
+            const toggleStatus = (id) => {
+                setEndpoints(endpoints.map(endpoint => {
+                    if (endpoint.id === id) {
+                        const newStatus = endpoint.status === 'active' ? 'inactive' : 'active';
+                        toast({
+                            title: `Endpoint ${newStatus}.`,
+                            description: `${endpoint.name} is now ${newStatus}.`,
+                            status: newStatus === 'active' ? "success" : "warning",
+                            duration: 3000,
+                            isClosable: true,
+                        });
+                        return { ...endpoint, status: newStatus };
+                    }
+                    return endpoint;
+                }));
+            };
+            
+            // Edit endpoint
+            const editEndpoint = (endpoint) => {
+                setEditingEndpoint(endpoint);
+                onOpen();
+            };
+            
+            // Go back to main page
+            const goToMain = () => {
+                window.location.href = 'index.html';
+            };
 
-    showNotification("Website information updated successfully.");
-});
-</script>
-
-
-<!--End of admin-->
-<footer class="fixed bottom-0 left-0 right-0 bg-gray-800 text-white flex justify-center items-center p-4">
-  <nav class="flex gap-4">
-      <a href="#home" class="hover:text-blue-400">Home</a>
-      <a href="#api" class="hover:text-blue-400">API</a>
-      <a href="#settings" class="hover:text-blue-400">Settings</a>
-  </nav>
-</footer>
+            return (
+                <ChakraProvider>
+                    {/* Navigation Bar */}
+                    <Box bg="purple.600" color="white" px={4} py={3} shadow="md">
+                        <Flex justify="space-between" align="center">
+                            <Heading size="md">Admin Panel - {websiteInfo.name}</Heading>
+                            <Button colorScheme="whiteAlpha" size="sm" onClick={goToMain}>
+                                Back to Main
+                            </Button>
+                        </Flex>
+                    </Box>
+                    
+                    {/* Main Content */}
+                    <Box p={5}>
+                        <Heading size="lg" mb={4}>API Management Administration</Heading>
+                        
+                        {/* Tabs for different sections */}
+                        <Tabs variant="enclosed" colorScheme="purple" mt={4}>
+                            <TabList>
+                                <Tab>Endpoints</Tab>
+                                <Tab>Website Settings</Tab>
+                                <Tab>API Documentation</Tab>
+                                <Tab>System</Tab>
+                            </TabList>
+                            
+                            <TabPanels>
+                                {/* Endpoints Tab */}
+                                <TabPanel>
+                                    <Flex justify="space-between" align="center" mb={4}>
+                                        <Heading size="md">Manage API Endpoints</Heading>
+                                        <Button colorScheme="purple" onClick={() => {
+                                            setEditingEndpoint(null);
+                                            onOpen();
+                                        }}>Add New Endpoint</Button>
+                                    </Flex>
+                                    
+                                    {isLoading ? (
+                                        <Flex justify="center" align="center" height="200px">
+                                            <div className="loading loading-spinner loading-lg text-primary"></div>
+                                        </Flex>
+                                    ) : (
+                                        <Table variant="simple">
+                                            <Thead>
+                                                <Tr>
+                                                    <Th>ID</Th>
+                                                    <Th>Name</Th>
+                                                    <Th>Method</Th>
+                                                    <Th>URL</Th>
+                                                    <Th>Status</Th>
+                                                    <Th>Actions</Th>
+                                                </Tr>
+                                            </Thead>
+                                            <Tbody>
+                                                {endpoints.map(endpoint => (
+                                                    <Tr key={endpoint.id}>
+                                                        <Td>{endpoint.id}</Td>
+                                                        <Td>{endpoint.name}</Td>
+                                                        <Td>
+                                                            <Badge 
+                                                                colorScheme={
+                                                                    endpoint.method === 'GET' ? 'green' :
+                                                                    endpoint.method === 'POST' ? 'blue' :
+                                                                    endpoint.method === 'PUT' ? 'orange' : 'red'
+                                                                }
+                                                            >
+                                                                {endpoint.method}
+                                                            </Badge>
+                                                        </Td>
+                                                        <Td>{endpoint.url}</Td>
+                                                        <Td>
+                                                            <Switch 
+                                                                colorScheme="green" 
+                                                                isChecked={endpoint.status === 'active'} 
+                                                                onChange={() => toggleStatus(endpoint.id)}
+                                                            />
+                                                        </Td>
+                                                        <Td>
+                                                            <Button 
+                                                                size="sm" 
+                                                                colorScheme="blue" 
+                                                                mr={2}
+                                                                onClick={() => editEndpoint(endpoint)}
+                                                            >
+                                                                Edit
+                                                            </Button>
+                                                            <Button 
+                                                                size="sm" 
+                                                                colorScheme="red" 
+                                                                onClick={() => deleteEndpoint(endpoint.id)}
+                                                            >
+                                                                Delete
+                                                            </Button>
+                                                        </Td>
+                                                    </Tr>
+                                                ))}
+                                            </Tbody>
+                                        </Table>
+                                    )}
+                                </TabPanel>
+                                
+                                {/* Website Settings Tab */}
+                                <TabPanel>
+                                    <Heading size="md" mb={4}>Website Settings</Heading>
+                                    <Box p={5} border="1px" borderColor="gray.200" borderRadius="md">
+                                        <FormControl mb={4}>
+                                            <FormLabel>Website Name</FormLabel>
+                                            <Input 
+                                                value={websiteInfo.name} 
+                                                onChange={(e) => updateWebsiteInfo('name', e.target.value)}
+                                            />
+                                        </FormControl>
+                                        
+                                        <FormControl mb={4}>
+                                            <FormLabel>Description</FormLabel>
+                                            <Textarea 
+                                                value={websiteInfo.description} 
+                                                onChange={(e) => updateWebsiteInfo('description', e.target.value)}
+                                            />
+                                        </FormControl>
+                                        
+                                        <FormControl mb={4}>
+                                            <FormLabel>Version</FormLabel>
+                                            <Input 
+                                                value={websiteInfo.version} 
+                                                onChange={(e) => updateWebsiteInfo('version', e.target.value)}
+                                            />
+                                        </FormControl>
+                                        
+                                        <Button colorScheme="purple" onClick={saveWebsiteInfo}>
+                                            Save Changes
+                                        </Button>
+                                    </Box>
+                                </TabPanel>
+                                
+                                {/* API Documentation Tab */}
+                                <TabPanel>
+                                    <Heading size="md" mb={4}>API Documentation Management</Heading>
+                                    <Box p={5} border="1px" borderColor="gray.200" borderRadius="md">
+                                        <Text mb={4}>Manage the documentation for your API endpoints. This information will be displayed to users.</Text>
+                                        
+                                        <Accordion allowMultiple>
+                                            {endpoints.map(endpoint => (
+                                                <AccordionItem key={endpoint.id}>
+                                                    <h2>
+                                                        <AccordionButton>
+                                                            <Box flex="1" textAlign="left">
+                                                                <Badge 
+                                                                    colorScheme={
+                                                                        endpoint.method === 'GET' ? 'green' :
+                                                                        endpoint.method === 'POST' ? 'blue' :
+                                                                        endpoint.method === 'PUT' ? 'orange' : 'red'
+                                                                    }
+                                                                    mr={2}
+                                                                >
+                                                                    {endpoint.method}
+                                                                </Badge>
+                                                                {endpoint.name} - {endpoint.url}
+                                                            </Box>
+                                                            <AccordionIcon />
+                                                        </AccordionButton>
+                                                    </h2>
+                                                    <AccordionPanel pb={4}>
+                                                        <FormControl mb={3}>
+                                                            <FormLabel>Description</FormLabel>
+                                                            <Textarea 
+                                                                value={endpoint.description || ''} 
+                                                                onChange={(e) => {
+                                                                    const updatedEndpoint = {
+                                                                        ...endpoint,
+                                                                        description: e.target.value
+                                                                    };
+                                                                    updateEndpoint(updatedEndpoint);
+                                                                }}
+                                                                placeholder="Describe what this endpoint does"
+                                                            />
+                                                        </FormControl>
+                                                        
+                                                        <FormControl mb={3}>
+                                                            <FormLabel>Example Request</FormLabel>
+                                                            <Code p={2} borderRadius="md" display="block" whiteSpace="pre">
+                                                                {endpoint.method === 'GET' ? 
+                                                                    `fetch('${endpoint.url}')
+  .then(response => response.json())
+  .then(data => console.log(data));` :
+                                                                    `fetch('${endpoint.url}', {
+  method: '${endpoint.method}',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    // request data here
+  })
+})
+  .then(response => response.json())
+  .then(data => console.log(data));`
+                                                                }
+                                                            </Code>
+                                                        </FormControl>
+                                                        
+                                                        <Button 
+                                                            colorScheme="purple" 
+                                                            size="sm"
+                                                            onClick={() => {
+                                                                toast({
+                                                                    title: "Documentation saved.",
+                                                                    description: "The documentation has been updated.",
+                                                                    status: "success",
+                                                                    duration: 3000,
+                                                                    isClosable: true,
+                                                                });
+                                                            }}
+                                                        >
+                                                            Save Documentation
+                                                        </Button>
+                                                    </AccordionPanel>
+                                                </AccordionItem>
+                                            ))}
+                                        </Accordion>
+                                    </Box>
+                                </TabPanel>
+                                
+                                {/* System Tab */}
+                                <TabPanel>
+                                    <Heading size="md" mb={4}>System Settings</Heading>
+                                    <Box p={5} border="1px" borderColor="gray.200" borderRadius="md">
+                                        <Text mb={4}>Configure system-wide settings for your API management system.</Text>
+                                        
+                                        <FormControl display="flex" alignItems="center" mb={4}>
+                                            <FormLabel htmlFor="notifications" mb="0">
+                                                Enable Notifications
+                                            </FormLabel>
+                                            <Switch id="notifications" colorScheme="purple" defaultChecked />
+                                        </FormControl>
+                                        
+                                        <FormControl display="flex" alignItems="center" mb={4}>
+                                            <FormLabel htmlFor="auto-save" mb="0">
+                                                Auto-save Changes
+                                            </FormLabel>
+                                            <Switch id="auto-save" colorScheme="purple" />
+                                        </FormControl>
+                                        
+                                        <FormControl mb={4}>
+                                            <FormLabel>Data Backup Frequency</FormLabel>
+                                            <Select defaultValue="daily">
+                                                <option value="hourly">Hourly</option>
+                                                <option value="daily">Daily</option>
+                                                <option value="weekly">Weekly</option>
+                                                <option value="monthly">Monthly</option>
+                                            </Select>
+                                        </FormControl>
+                                        
+                                        <Button 
+                                            colorScheme="purple" 
+                                            onClick={() => {
+                                                toast({
+                                                    title: "Settings saved.",
+                                                    description: "Your system settings have been updated.",
+                                                    status: "success",
+                                                    duration: 3000,
+                                                    isClosable: true,
+                                                });
+                                            }}
+                                        >
+                                            Save Settings
+                                        </Button>
+                                    </Box>
+                                </TabPanel>
+                            </TabPanels>
+                        </Tabs>
+                    </Box>
+                    
+                    {/* Bottom Menu */}
+                    <Box position="fixed" bottom="0" width="100%" bg="purple.600" color="white" py={3}>
+                        <Flex justify="center" align="center">
+                            <Button variant="ghost" colorScheme="whiteAlpha" mx={2}>Endpoints</Button>
+                            <Button variant="ghost" colorScheme="whiteAlpha" mx={2}>Settings</Button>
+                            <Button variant="ghost" colorScheme="whiteAlpha" mx={2}>Documentation</Button>
+                            <Button variant="ghost" colorScheme="whiteAlpha" mx={2}>System</Button>
+                        </Flex>
+                    </Box>
+                    
+                    {/* Endpoint Modal */}
+                    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader>
+                                {editingEndpoint ? 'Edit Endpoint' : 'Add New Endpoint'}
+                            </ModalHeader>
+                            <ModalCloseButton />
+                            <EndpointForm 
+                                endpoint={editingEndpoint} 
+                                onSubmit={(endpoint) => {
+                                    if (editingEndpoint) {
+                                        updateEndpoint(endpoint);
+                                    } else {
+                                        addEndpoint(endpoint);
+                                    }
+                                    onClose();
+                                }} 
+                            />
+                        </ModalContent>
+                    </Modal>
+                </ChakraProvider>
+            );
+        }
+        
+        // Endpoint Form Component
+        function EndpointForm({ endpoint, onSubmit }) {
+            const [formData, setFormData] = useState(
+                endpoint || {
+                    name: '',
+                    method: 'GET',
+                    url: '',
+                    status: 'active',
+                    description: ''
+                }
+            );
+            
+            const handleChange = (e) => {
+                const { name, value } = e.target;
+                setFormData({
+                    ...formData,
+                    [name]: value
+                });
+            };
+            
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                onSubmit(formData);
+            };
+            
+            return (
+                <form onSubmit={handleSubmit}>
+                    <ModalBody>
+                        <FormControl mb={3} isRequired>
+                            <FormLabel>Endpoint Name</FormLabel>
+                            <Input 
+                                name="name" 
+                                value={formData.name} 
+                                onChange={handleChange} 
+                                placeholder="e.g. Get Users"
+                            />
+                        </FormControl>
+                        
+                        <FormControl mb={3} isRequired>
+                            <FormLabel>Method</FormLabel>
+                            <Select name="method" value={formData.method} onChange={handleChange}>
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                                <option value="PATCH">PATCH</option>
+                            </Select>
+                        </FormControl>
+                        
+                        <FormControl mb={3} isRequired>
+                            <FormLabel>URL</FormLabel>
+                            <Input 
+                                name="url" 
+                                value={formData.url} 
+                                onChange={handleChange} 
+                                placeholder="e.g. /api/users"
+                            />
+                        </FormControl>
+                        
+                        <FormControl mb={3}>
+                            <FormLabel>Status</FormLabel>
+                            <Select name="status" value={formData.status} onChange={handleChange}>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </Select>
+                        </FormControl>
+                        
+                        <FormControl mb={3}>
+                            <FormLabel>Description</FormLabel>
+                            <Textarea 
+                                name="description" 
+                                value={formData.description} 
+                                onChange={handleChange} 
+                                placeholder="Describe what this endpoint does"
+                            />
+                        </FormControl>
+                    </ModalBody>
+                    
+                    <ModalFooter>
+                        <Button colorScheme="purple" mr={3} type="submit">
+                            Save
+                        </Button>
+                        <Button variant="ghost" onClick={() => onSubmit(null)}>Cancel</Button>
+                    </ModalFooter>
+                </form>
+            );
+        }
+        
+        // Render the Admin App
+        ReactDOM.render(<AdminApp />, document.getElementById('admin-app'));
+    </script>
+</body>
+</html>
