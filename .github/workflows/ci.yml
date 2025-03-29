@@ -12,12 +12,20 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4.2.2
+      with:
+        repository: ${{ github.repository }}
+        ref: ${{ github.ref }}
+        token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v4.3.0
       with:
         node-version: '14'
+        check-latest: true
+
+    - name: List directory contents
+      run: ls -la
 
     - name: Install dependencies
       run: npm install
