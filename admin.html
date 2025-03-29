@@ -5,14 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API Manager - Admin Panel</title>
     
-    <!-- Chakra UI via CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@chakra-ui/system@2.5.7/dist/chakra-ui-system.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@chakra-ui/react@2.8.0/dist/chakra-ui-react.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/framer-motion@10.16.4/dist/framer-motion.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emotion/react@11.11.1/dist/emotion-react.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emotion/styled@11.11.0/dist/emotion-styled.min.js"></script>
+    <!-- React and ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX transformation (THIS WAS MISSING) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Chakra UI Dependencies -->
+    <script src="https://unpkg.com/@emotion/react@11/dist/emotion-react.production.min.js"></script>
+    <script src="https://unpkg.com/@emotion/styled@11/dist/emotion-styled.production.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@6/dist/framer-motion.production.min.js"></script>
+    
+    <!-- Chakra UI -->
+    <script src="https://unpkg.com/@chakra-ui/react@2/dist/chakra-ui-react.production.min.js"></script>
     
     <!-- DaisyUI for loading animations -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.2/dist/full.css" rel="stylesheet" type="text/css" />
@@ -21,10 +27,236 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-    <div id="admin-app"></div>
+<body class="admin-theme">
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="container">
+            <h1 id="admin-website-name">Admin Panel - API Endpoint Manager</h1>
+            <button class="btn btn-light" onclick="window.location.href='index.html'">Back to Main</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title">API Management Administration</h1>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab-header">
+                <div class="tab-item active" data-tab="endpoints">Endpoints</div>
+                <div class="tab-item" data-tab="website-settings">Website Settings</div>
+                <div class="tab-item" data-tab="api-docs">API Documentation</div>
+                <div class="tab-item" data-tab="system">System</div>
+            </div>
+            
+            <div class="tab-content">
+                <!-- Endpoints Tab -->
+                <div class="tab-pane active" id="endpoints">
+                    <div class="tab-header-actions">
+                        <h2>Manage API Endpoints</h2>
+                        <button class="btn btn-primary" id="admin-add-endpoint-btn">Add New Endpoint</button>
+                    </div>
+                    
+                    <div id="admin-endpoints-loading" class="loading-container">
+                        <div class="loading-spinner"></div>
+                    </div>
+                    
+                    <div id="admin-endpoints-table-container" style="display: none;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Method</th>
+                                    <th>URL</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-endpoints-table-body">
+                                <!-- Endpoints will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Website Settings Tab -->
+                <div class="tab-pane" id="website-settings">
+                    <h2>Website Settings</h2>
+                    <div class="card">
+                        <form id="website-info-form">
+                            <div class="form-group">
+                                <label for="website-name">Website Name</label>
+                                <input type="text" id="website-name" name="name" value="API Endpoint Manager">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="website-description">Description</label>
+                                <textarea id="website-description" name="description">Manage your API endpoints easily</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="website-version">Version</label>
+                                <input type="text" id="website-version" name="version" value="1.0.0">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- API Documentation Tab -->
+                <div class="tab-pane" id="api-docs">
+                    <h2>API Documentation Management</h2>
+                    <div class="card">
+                        <p>Manage the documentation for your API endpoints. This information will be displayed to users.</p>
+                        
+                        <div class="accordion" id="endpoints-docs-accordion">
+                            <!-- Endpoint documentation items will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- System Tab -->
+                <div class="tab-pane" id="system">
+                    <h2>System Settings</h2>
+                    <div class="card">
+                        <p>Configure system-wide settings for your API management system.</p>
+                        
+                        <div class="form-group switch-group">
+                            <label for="notifications-switch">Enable Notifications</label>
+                            <label class="switch">
+                                <input type="checkbox" id="notifications-switch" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group switch-group">
+                            <label for="auto-save-switch">Auto-save Changes</label>
+                            <label class="switch">
+                                <input type="checkbox" id="auto-save-switch">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="backup-frequency">Data Backup Frequency</label>
+                            <select id="backup-frequency">
+                                <option value="hourly">Hourly</option>
+                                <option value="daily" selected>Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                        
+                        <button class="btn btn-primary" id="save-system-settings">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Bottom Menu -->
+    <footer class="bottom-menu">
+        <div class="container">
+            <button class="menu-item">Endpoints</button>
+            <button class="menu-item">Settings</button>
+            <button class="menu-item">Documentation</button>
+            <button class="menu-item">System</button>
+        </div>
+    </footer>
+    
+    <!-- Endpoint Modal -->
+    <div class="modal" id="admin-endpoint-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="endpoint-modal-title">Add New Endpoint</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="admin-endpoint-form">
+                    <input type="hidden" id="endpoint-id" name="id">
+                    
+                    <div class="form-group">
+                        <label for="admin-endpoint-name">Endpoint Name <span class="required">*</span></label>
+                        <input type="text" id="admin-endpoint-name" name="name" placeholder="e.g. Get Users" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-endpoint-method">Method <span class="required">*</span></label>
+                        <select id="admin-endpoint-method" name="method" required>
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="PATCH">PATCH</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-endpoint-url">URL <span class="required">*</span></label>
+                        <input type="text" id="admin-endpoint-url" name="url" placeholder="e.g. /api/users" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-endpoint-status">Status</label>
+                        <select id="admin-endpoint-status" name="status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-endpoint-description">Description</label>
+                        <textarea id="admin-endpoint-description" name="description" placeholder="Describe what this endpoint does"></textarea>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" id="admin-cancel-endpoint">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Documentation Edit Modal -->
+    <div class="modal" id="doc-edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Documentation</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="doc-edit-form">
+                    <input type="hidden" id="doc-endpoint-id" name="id">
+                    
+                    <div class="form-group">
+                        <label for="doc-description">Description</label>
+                        <textarea id="doc-description" name="description" placeholder="Describe what this endpoint does"></textarea>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Documentation</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-doc-edit">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="admin-notification">
+        <div class="notification-content">
+            <span id="admin-notification-message"></span>
+        </div>
+        <button class="notification-close">&times;</button>
+    </div>
+    
+    <script src="js/admin.js"></script>
 
     <script type="text/babel">
+        // Destructure Chakra UI components
         const {
             ChakraProvider,
             Box,
@@ -58,19 +290,6 @@
             Tab,
             TabPanel,
             Badge,
-            Menu,
-            MenuButton,
-            MenuList,
-            MenuItem,
-            IconButton,
-            Tooltip,
-            Drawer,
-            DrawerBody,
-            DrawerFooter,
-            DrawerHeader,
-            DrawerOverlay,
-            DrawerContent,
-            DrawerCloseButton,
             Switch,
             Code,
             Accordion,
@@ -361,11 +580,9 @@
                                                                         endpoint.method === 'POST' ? 'blue' :
                                                                         endpoint.method === 'PUT' ? 'orange' : 'red'
                                                                     }
-                                                                    mr={2}
                                                                 >
                                                                     {endpoint.method}
                                                                 </Badge>
-                                                                {endpoint.name} - {endpoint.url}
                                                             </Box>
                                                             <AccordionIcon />
                                                         </AccordionButton>
@@ -468,7 +685,7 @@
                                                     description: "Your system settings have been updated.",
                                                     status: "success",
                                                     duration: 3000,
-                                                    isClosable: true,
+                                                isClosable: true,
                                                 });
                                             }}
                                         >
@@ -604,7 +821,10 @@
         }
         
         // Render the Admin App
-        ReactDOM.render(<AdminApp />, document.getElementById('admin-app'));
+        const root = ReactDOM.createRoot(document.getElementById('admin-app'));
+        root.render(<AdminApp />);
     </script>
+    
+    <script src="js/admin.js"></script>
 </body>
 </html>
