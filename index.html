@@ -1,15 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Web App</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@daisyui/dist/full.css">
-    <script src="https://unpkg.com/@chakra-ui/react@latest/umd/chakra-ui-react.umd.min.js"></script>
-    <script src="https://unpkg.com/@chakra-ui/react@latest/umd/chakra-ui-theme.umd.min.js"></script>
+  <!-- Chakra UI -->
+  <link href="https://cdn.jsdelivr.net/npm/@chakra-ui/core@1.0.0/dist/chakra-ui.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@chakra-ui/react@1.0.0/dist/chakra-ui-react.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/framer-motion@4.1.17/dist/framer-motion.umd.js"></script>
+
+  <!-- DaisyUI -->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.5.1/dist/full.css" rel="stylesheet">
 </head>
-<body>
-    <div id="app"></div>
-    <script src="app.js"></script>
-</body>
-</html>
+<div id="negative-bar" class="hidden fixed top-0 left-0 right-0 bg-red-500 text-white text-center py-2">
+  Warning: An error occurred while processing your request.
+</div>
+<script>
+  function showNegativeBar(message) {
+    const negativeBar = document.getElementById('negative-bar');
+    negativeBar.textContent = message;
+    negativeBar.classList.remove('hidden');
+    setTimeout(() => negativeBar.classList.add('hidden'), 5000); // Hide after 5 seconds
+}
+</script>
+<section id="api-management" class="p-4">
+  <h2 class="text-2xl font-bold mb-4">API Management</h2>
+  <div class="flex flex-col gap-4">
+      <div class="flex gap-2">
+          <input type="text" id="api-url" placeholder="Enter API URL" class="input input-bordered w-full">
+          <button id="add-api-btn" class="btn btn-primary">Add API</button>
+      </div>
+      <ul id="api-list" class="list-disc pl-4">
+          <!-- API items will be dynamically added here -->
+      </ul>
+  </div>
+</section>
+<script>
+  document.getElementById('add-api-btn').addEventListener('click', () => {
+    const apiUrl = document.getElementById('api-url').value.trim();
+    if (!apiUrl) {
+        showNegativeBar("Please enter a valid API URL.");
+        return;
+    }
+
+    const apiList = document.getElementById('api-list');
+    const li = document.createElement('li');
+    li.textContent = apiUrl;
+    apiList.appendChild(li);
+
+    // Show success notification
+    showNotification(`API "${apiUrl}" added successfully.`);
+
+    // Clear input
+    document.getElementById('api-url').value = '';
+});
+</script>
+
+<script>
+  function showNotification(message, status = "success") {
+    const toast = new ChakraUI.Toast({
+        title: status === "success" ? "Success" : "Error",
+        description: message,
+        status: status,
+        duration: 3000,
+        isClosable: true,
+    });
+    toast.show();
+}
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const siteName = localStorage.getItem('siteName') || 'Default Site';
+    document.title = siteName;
+});
+</script>
+
+<!--End of index-->
+<footer class="fixed bottom-0 left-0 right-0 bg-gray-800 text-white flex justify-center items-center p-4">
+  <nav class="flex gap-4">
+      <a href="#home" class="hover:text-blue-400">Home</a>
+      <a href="#api" class="hover:text-blue-400">API</a>
+      <a href="#settings" class="hover:text-blue-400">Settings</a>
+  </nav>
+</footer>
