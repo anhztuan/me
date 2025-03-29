@@ -1,326 +1,248 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self'; connect-src 'self'; img-src 'self'; frame-src 'self';">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    <title>API Manager - Admin Panel</title>
-    <!-- DaisyUI and Tailwind CSS via CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" type="text/css" />
+    <title>API Management Dashboard</title>
+
+    <!-- Chakra UI -->
+    <script src="https://unpkg.com/@chakra-ui/react@2/dist/chakra-ui.min.js"></script>
+    <!-- DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.2/dist/full.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        /* Reset and Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
+        :root {
+            --primary: #4A90E2;
+            --secondary: #6C63FF;
+            --success: #2ECC71;
+            --error: #E74C3C;
+            --text: #2C3E50;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        /* Typography */
-        h1, h2, h3, h4, h5, h6 {
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            line-height: 1.2;
-        }
-
-        .page-title {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        p {
-            margin-bottom: 1rem;
-        }
-
-        .text-muted {
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-
-        /* Navigation Bar - Now with rounded corners */
-        .navbar {
-            background-color: #3182ce;
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 0 0 1rem 1rem;
-        }
-
-        .navbar .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar h1 {
-            font-size: 1.5rem;
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
             margin: 0;
         }
 
-        /* Admin Theme */
-        .admin-theme .navbar {
-            background-color: #805ad5;
+        .sidebar {
+            width: 260px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            z-index: 40;
+            transition: all 0.3s;
         }
 
-        .admin-theme .btn-primary {
-            background-color: #805ad5;
-            border-color: #805ad5;
-        }
-
-        .admin-theme .btn-primary:hover {
-            background-color: #6b46c1;
-            border-color: #6b46c1;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Main Content */
-        main {
-            padding: 2rem 0;
-            margin-bottom: 60px; /* Space for bottom menu */
-        }
-
-        /* Cards - Now with rounded corners */
-        .card {
-            background-color: white;
-            border-radius: 1rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        .sidebar-header {
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid #e2e8f0;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-bottom: 1px solid #e5e7eb;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        .sidebar-menu {
+            padding: 1rem;
         }
 
-        /* Buttons - Enhanced hover effects */
-        .btn {
-            display: inline-block;
-            font-weight: 400;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: middle;
-            user-select: none;
-            border: 1px solid transparent;
-            padding: 0.375rem 0.75rem;
-            font-size: 1rem;
-            line-height: 1.5;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, transform 0.3s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-primary {
-            color: #fff;
-            background-color: #3182ce;
-            border-color: #3182ce;
-        }
-
-        .btn-primary:hover {
-            background-color: #2b6cb0;
-            border-color: #2b6cb0;
-        }
-
-        .btn-secondary {
-            color: #fff;
-            background-color: #718096;
-            border-color: #718096;
-        }
-
-        .btn-secondary:hover {
-            background-color: #4a5568;
-            border-color: #4a5568;
-        }
-
-        .btn-light {
-            color: #212529;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: transparent;
-        }
-
-        .btn-light:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-danger {
-            color: #fff;
-            background-color: #e53e3e;
-            border-color: #e53e3e;
-        }
-
-        .btn-danger:hover {
-            background-color: #c53030;
-            border-color: #c53030;
-        }
-
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-            line-height: 1.5;
-            border-radius: 0.375rem;
-        }
-
-        /* Tabs - Rounded corners */
-        .tabs {
-            margin-top: 2rem;
-        }
-
-        .tab-header {
+        .menu-item {
             display: flex;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 1rem;
-        }
-
-        .tab-item {
+            align-items: center;
             padding: 0.75rem 1rem;
+            color: var(--text);
+            border-radius: 0.5rem;
+            transition: all 0.2s;
             cursor: pointer;
-            border-bottom: 2px solid transparent;
-            font-weight: 500;
-            border-radius: 0.5rem 0.5rem 0 0;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            margin-bottom: 0.5rem;
         }
 
-        .tab-item:hover {
-            color: #3182ce;
-            background-color: rgba(49, 130, 206, 0.05);
+        .menu-item:hover {
+            background: #f3f4f6;
         }
 
-        .tab-item.active {
-            color: #3182ce;
-            border-bottom-color: #3182ce;
-            background-color: rgba(49, 130, 206, 0.1);
+        .menu-item.active {
+            background: var(--primary);
+            color: white;
         }
 
-        .admin-theme .tab-item:hover,
-        .admin-theme .tab-item.active {
-            color: #805ad5;
-            border-bottom-color: #805ad5;
-            background-color: rgba(128, 90, 213, 0.1);
+        .menu-item svg {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-right: 0.75rem;
         }
 
-        .tab-pane {
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
         }
 
-        .tab-pane.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .tab-header-actions {
+        .user-info-bar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 260px;
+            background: white;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            z-index: 30;
         }
 
-        /* Tables - Rounded corners */
-        .data-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-bottom: 1rem;
+        .card {
+            background: white;
             border-radius: 0.5rem;
-            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1.5rem;
         }
 
-        .data-table th,
-        .data-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
-        .data-table th {
-            background-color: #f7fafc;
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            font-size: 1.875rem;
             font-weight: 600;
+            color: var(--text);
         }
 
-        .data-table tbody tr {
-            transition: background-color 0.3s ease;
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .data-table tbody tr:hover {
-            background-color: #f7fafc;
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
         }
 
-        /* Badges - Rounded corners */
+        th {
+            background: #f9fafb;
+            font-weight: 500;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        td {
+            border-bottom: 1px solid #e5e7eb;
+        }
+
         .badge {
-            display: inline-block;
-            padding: 0.25em 0.4em;
-            font-size: 75%;
-            font-weight: 700;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
         }
 
         .badge-success {
-            color: #fff;
-            background-color: #38a169;
-        }
-
-        .badge-danger {
-            color: #fff;
-            background-color: #e53e3e;
-        }
-
-        .badge-primary {
-            color: #fff;
-            background-color: #3182ce;
+            background: #dcfce7;
+            color: #166534;
         }
 
         .badge-warning {
-            color: #fff;
-            background-color: #dd6b20;
+            background: #fef9c3;
+            color: #854d0e;
         }
 
-        .badge-info {
-            color: #fff;
-            background-color: #00b5d8;
+        .badge-error {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
-        /* Forms - Rounded corners */
+        /* Login Modal Styles */
+        #loginOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Notification Styles */
+        .notification-box {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .notification {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-out;
+            min-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Tab Styles */
+        .tab-container {
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            display: inline-flex;
+            padding: 0.75rem 1rem;
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Form Styles */
         .form-group {
             margin-bottom: 1rem;
         }
@@ -329,1772 +251,621 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
+            color: var(--text);
         }
 
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            display: block;
+        .form-control {
             width: 100%;
-            padding: 0.375rem 0.75rem;
-            font-size: 1rem;
-            line-height: 1.5;
-            color: #495057;
-            background-color: #fff;
-            background-clip: padding-box;
-            border: 1px solid #ced4da;
-            border-radius: 0.5rem;
-            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, transform 0.3s ease;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            background: #f9fafb;
+            color: var(--text);
+            transition: all 0.2s;
         }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            color: #495057;
-            background-color: #fff;
-            border-color: #a3bffa;
-            outline: 0;
-            box-shadow: 0 0 0 0.2rem rgba(66, 153, 225, 0.25);
-            transform: translateY(-2px);
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74,144,226,0.1);
+            background: white;
         }
 
-        .admin-theme .form-group input:focus,
-        .admin-theme .form-group select:focus,
-        .admin-theme .form-group textarea:focus {
-            border-color: #d6bcfa;
-            box-shadow: 0 0 0 0.2rem rgba(128, 90, 213, 0.25);
-        }
-
-        .form-group textarea {
-            height: 100px;
-            resize: vertical;
-        }
-
-        .required {
-            color: #e53e3e;
-        }
-
-        /* Switch Toggle - Rounded corners */
-        .switch-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: #3182ce;
-        }
-
-        .admin-theme input:checked + .slider {
-            background-color: #805ad5;
-        }
-
-        input:focus + .slider {
-            box-shadow: 0 0 1px #3182ce;
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-
-        /* Bottom Menu - Rounded corners */
-        .bottom-menu {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #3182ce;
-            color: white;
-            padding: 0.75rem 0;
-            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-            border-radius: 1rem 1rem 0 0;
-        }
-
-        .admin-theme .bottom-menu {
-            background-color: #805ad5;
-        }
-
-        .bottom-menu .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .menu-item {
-            background: none;
-            border: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            margin: 0 0.5rem;
-            cursor: pointer;
-            font-size: 0.9rem;
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
             font-weight: 500;
-            border-radius: 0.5rem;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .menu-item:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-        }
-
-        /* Modal - Rounded corners */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 0;
-            border: 1px solid #e2e8f0;
-            border-radius: 1rem;
-            width: 80%;
-            max-width: 600px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            animation: modalFadeIn 0.3s;
-        }
-
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            padding: 1rem;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 1rem 1rem 0 0;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.25rem;
-        }
-
-        .close-modal {
-            color: #aaa;
-            font-size: 1.5rem;
-            font-weight: bold;
             cursor: pointer;
-            transition: color 0.3s ease, transform 0.3s ease;
-        }
-
-        .close-modal:hover {
-            color: #333;
-            transform: rotate(90deg);
-        }
-
-        .modal-body {
-            padding: 1rem;
-        }
-
-        .modal-footer {
-            padding: 1rem 0 0;
-            display: flex;
-            justify-content: flex-end;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
             gap: 0.5rem;
         }
 
-        /* Notification - Rounded corners */
-        .notification {
-            display: none;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 1rem;
-            width: 300px;
-            animation: notificationFadeIn 0.3s;
+        .btn-primary {
+            background: var(--primary);
+            color: white;
         }
 
-        @keyframes notificationFadeIn {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .btn-primary:hover {
+            background: #357abd;
         }
 
-        .notification-content {
-            display: flex;
-            align-items: center;
+        .btn-error {
+            background: var(--error);
+            color: white;
         }
 
-        .notification-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: #aaa;
-            transition: color 0.3s ease, transform 0.3s ease;
-        }
-
-        .notification-close:hover {
-            color: #333;
-            transform: rotate(90deg);
-        }
-
-        /* Notification Colors */
-        .notification-success {
-            border-left: 4px solid #38a169;
-            background-color: #f0fff4;
-        }
-
-        .notification-error {
-            border-left: 4px solid #e53e3e;
-            background-color: #fff5f5;
-        }
-
-        .notification-warning {
-            border-left: 4px solid #dd6b20;
-            background-color: #fffaf0;
-        }
-
-        .notification-info {
-            border-left: 4px solid #3182ce;
-            background-color: #ebf8ff;
-        }
-
-        /* Accordion - Rounded corners */
-        .accordion-item {
-            border: 1px solid #e2e8f0;
-            border-radius: 0.75rem;
-            margin-bottom: 0.5rem;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .accordion-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .accordion-header {
-            background-color: #f7fafc;
-            padding: 1rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 0.75rem 0.75rem 0 0;
-            transition: background-color 0.3s ease;
-        }
-
-        .accordion-header:hover {
-            background-color: #edf2f7;
-        }
-
-        .accordion-content {
-            padding: 1rem;
-            display: none;
-            border-top: 1px solid #e2e8f0;
-            animation: accordionFadeIn 0.5s ease;
-        }
-
-        @keyframes accordionFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .accordion-content.active {
-            display: block;
-        }
-
-        /* Loading Spinner */
-        .loading-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-        }
-
-        .loading-spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
+        .spinner {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
-            border-top: 4px solid #3182ce;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-
-        .admin-theme .loading-spinner {
-            border-top-color: #805ad5;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            display: none;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Code Block - Rounded corners */
-        .code-block {
-            background-color: #f7fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            font-family: monospace;
-            white-space: pre;
-            overflow-x: auto;
-        }
-
-        /* Scroll Animation Classes */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .slide-in-left {
-            opacity: 0;
-            transform: translateX(-50px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .slide-in-left.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .slide-in-right {
-            opacity: 0;
-            transform: translateX(50px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .slide-in-right.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .zoom-in {
-            opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .zoom-in.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .tab-header {
-                flex-wrap: wrap;
-            }
-            
-            .tab-item {
-                flex: 1 0 auto;
-                text-align: center;
-                padding: 0.5rem;
-            }
-            
-            .modal-content {
-                width: 95%;
-                margin: 5% auto;
-            }
-            
-            .data-table {
-                display: block;
-                overflow-x: auto;
-            }
-            
-            .bottom-menu .container {
-                justify-content: space-around;
-            }
-            
-            .menu-item {
-                margin: 0;
-                padding: 0.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .tab-header-actions {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .tab-header-actions button {
-                margin-top: 0.5rem;
-            }
-            
-            .form-group input,
-            .form-group select,
-            .form-group textarea {
-                font-size: 0.9rem;
-            }
-            
-            .btn {
-                font-size: 0.9rem;
-            }
-        }
-
-        /* Add new styles for security features */
-        .session-info {
-            position: fixed;
-            bottom: 70px;
-            right: 20px;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            font-size: 0.8rem;
-            color: #6c757d;
-            z-index: 90;
-        }
-        
-        .logout-btn {
-            margin-left: 1rem;
-            color: #805ad5;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        
-        .logout-btn:hover {
-            text-decoration: underline;
-        }
-        
-        .security-alert {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #fff5f5;
-            border-left: 4px solid #e53e3e;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            display: none;
-            max-width: 90%;
-            width: 400px;
-            text-align: center;
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="admin-theme">
-    <!-- Security Alert -->
-    <div id="security-alert" class="security-alert">
-        <div id="security-alert-message">Security issue detected!</div>
-    </div>
-
-    <!-- Navigation Bar -->
-    <header class="navbar">
-        <div class="container">
-            <h1 id="admin-website-name">Admin Panel - API Endpoint Manager</h1>
-            <div>
-                <button class="btn btn-light" id="logout-button">Logout</button>
-                <button class="btn btn-light" onclick="window.location.href='index.html'">Back to Main</button>
+<body>
+    <!-- User Info Bar -->
+    <div class="user-info-bar">
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span id="userLoginInfo">Current User's Login: anhztuan</span>
             </div>
         </div>
-    </header>
-
-    <!-- Session Info -->
-    <div class="session-info">
-        Session expires in: <span id="session-timer">30:00</span>
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span id="currentDateTime"></span>
+            </div>
+            <button onclick="handleLogout()" class="btn btn-error">Logout</button>
+        </div>
     </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="text-xl font-bold">API Management</h1>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-item active" onclick="showSection('dashboard')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                </svg>
+                Dashboard
+            </div>
+            <div class="menu-item" onclick="showSection('endpoints')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                API Endpoints
+            </div>
+            <div class="menu-item" onclick="showSection('users')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                User Access
+            </div>
+            <div class="menu-item" onclick="showSection('keys')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                </svg>
+                API Keys
+            </div>
+            <div class="menu-item" onclick="showSection('logs')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                Request Logs
+            </div>
+            <div class="menu-item" onclick="showSection('settings')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Settings
+            </div>
+        </div>
+    </div>
+<!-- Continue from previous code -->
 
     <!-- Main Content -->
-    <main class="container">
-        <h1 class="page-title fade-in">API Management Administration</h1>
-        
-        <!-- Tabs -->
-        <div class="tabs fade-in">
-            <div class="tab-header">
-                <div class="tab-item active" data-tab="endpoints">Endpoints</div>
-                <div class="tab-item" data-tab="website-settings">Website Settings</div>
-                <div class="tab-item" data-tab="api-docs">API Documentation</div>
-                <div class="tab-item" data-tab="system">System</div>
-            </div>
-            
-            <div class="tab-content">
-                <!-- Endpoints Tab -->
-                <div class="tab-pane active" id="endpoints">
-                    <div class="tab-header-actions slide-in-left">
-                        <h2>Manage API Endpoints</h2>
-                        <button class="btn btn-primary" id="admin-add-endpoint-btn">Add New Endpoint</button>
-                    </div>
-                    
-                    <div id="admin-endpoints-loading" class="loading-container">
-                        <div class="loading-spinner"></div>
-                    </div>
-                    
-                    <div id="admin-endpoints-table-container" class="slide-in-right" style="display: none;">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Method</th>
-                                    <th>URL</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="admin-endpoints-table-body">
-                                <!-- Endpoints will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Website Settings Tab -->
-                <div class="tab-pane" id="website-settings">
-                    <h2 class="slide-in-left">Website Settings</h2>
-                    <div class="card zoom-in">
-                        <form id="website-info-form">
-                            <div class="form-group">
-                                <label for="website-name">Website Name</label>
-                                <input type="text" id="website-name" name="name" value="API Endpoint Manager">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="website-description">Description</label>
-                                <textarea id="website-description" name="description">Manage your API endpoints easily</textarea>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="website-version">Version</label>
-                                <input type="text" id="website-version" name="version" value="1.0.0">
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                        </form>
-                    </div>
-                </div>
-                
-                <!-- API Documentation Tab -->
-                <div class="tab-pane" id="api-docs">
-                    <h2 class="slide-in-left">API Documentation Management</h2>
-                    <div class="card zoom-in">
-                        <p>Manage the documentation for your API endpoints. This information will be displayed to users.</p>
-                        
-                        <div class="accordion" id="endpoints-docs-accordion">
-                            <!-- Endpoint documentation items will be loaded here -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- System Tab -->
-                <div class="tab-pane" id="system">
-                    <h2 class="slide-in-left">System Settings</h2>
-                    <div class="card zoom-in">
-                        <p>Configure system-wide settings for your API management system.</p>
-                        
-                        <div class="form-group switch-group fade-in">
-                            <label for="notifications-switch">Enable Notifications</label>
-                            <label class="switch">
-                                <input type="checkbox" id="notifications-switch" checked>
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-                        
-                        <div class="form-group switch-group fade-in">
-                            <label for="auto-save-switch">Auto-save Changes</label>
-                            <label class="switch">
-                                <input type="checkbox" id="auto-save-switch">
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-                        
-                        <div class="form-group fade-in">
-                            <label for="backup-frequency">Data Backup Frequency</label>
-                            <select id="backup-frequency">
-                                <option value="hourly">Hourly</option>
-                                <option value="daily" selected>Daily</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly">Monthly</option>
-                            </select>
-                        </div>
-                        
-                        <button class="btn btn-primary fade-in" id="save-system-settings">Save Settings</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-    
-    <!-- Bottom Menu -->
-    <footer class="bottom-menu">
-        <div class="container">
-            <button class="menu-item">Endpoints</button>
-            <button class="menu-item">Settings</button>
-            <button class="menu-item">Documentation</button>
-            <button class="menu-item">System</button>
-        </div>
-    </footer>
-    
-    <!-- Endpoint Modal -->
-    <div class="modal" id="admin-endpoint-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="endpoint-modal-title">Add New Endpoint</h2>
-                <span class="close-modal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="admin-endpoint-form">
-                    <input type="hidden" id="endpoint-id" name="id">
-                    
-                    <div class="form-group">
-                        <label for="admin-endpoint-name">Endpoint Name <span class="required">*</span></label>
-                        <input type="text" id="admin-endpoint-name" name="name" placeholder="e.g. Get Users" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="admin-endpoint-method">Method <span class="required">*</span></label>
-                        <select id="admin-endpoint-method" name="method" required>
-                            <option value="GET">GET</option>
-                            <option value="POST">POST</option>
-                            <option value="PUT">PUT</option>
-                            <option value="DELETE">DELETE</option>
-                            <option value="PATCH">PATCH</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="admin-endpoint-url">URL <span class="required">*</span></label>
-                        <input type="text" id="admin-endpoint-url" name="url" placeholder="e.g. /api/users" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="admin-endpoint-status">Status</label>
-                        <select id="admin-endpoint-status" name="status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="admin-endpoint-description">Description</label>
-                        <textarea id="admin-endpoint-description" name="description" placeholder="Describe what this endpoint does"></textarea>
-                    </div>
-                    
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Save</button>
-                        <button type="button" class="btn btn-secondary" id="admin-cancel-endpoint">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Documentation Edit Modal -->
-    <div class="modal" id="doc-edit-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Edit Documentation</h2>
-                <span class="close-modal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="doc-edit-form">
-                    <input type="hidden" id="doc-endpoint-id" name="id">
-                    
-                    <div class="form-group">
-                        <label for="doc-description">Description</label>
-                        <textarea id="doc-description" name="description" placeholder="Describe what this endpoint does"></textarea>
-                    </div>
-                    
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Save Documentation</button>
-                        <button type="button" class="btn btn-secondary" id="cancel-doc-edit">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Notification -->
-    <div class="notification" id="admin-notification">
-        <div class="notification-content">
-            <span id="admin-notification-message"></span>
-        </div>
-        <button class="notification-close">&times;</button>
-    </div>
-    
-    <script>
-        // DOM Elements
-        const tabItems = document.querySelectorAll('.tab-item');
-        const tabPanes = document.querySelectorAll('.tab-pane');
-        const adminEndpointsTableBody = document.getElementById('admin-endpoints-table-body');
-        const adminEndpointsLoading = document.getElementById('admin-endpoints-loading');
-        const adminEndpointsTableContainer = document.getElementById('admin-endpoints-table-container');
-        const adminAddEndpointBtn = document.getElementById('admin-add-endpoint-btn');
-        const adminEndpointModal = document.getElementById('admin-endpoint-modal');
-        const adminCloseModalBtn = document.querySelector('#admin-endpoint-modal .close-modal');
-        const adminCancelEndpointBtn = document.getElementById('admin-cancel-endpoint');
-        const adminEndpointForm = document.getElementById('admin-endpoint-form');
-        const adminNotification = document.getElementById('admin-notification');
-        const adminNotificationMessage = document.getElementById('admin-notification-message');
-        const adminNotificationCloseBtn = document.querySelector('#admin-notification .notification-close');
-        const websiteInfoForm = document.getElementById('website-info-form');
-        const websiteNameInput = document.getElementById('website-name');
-        const websiteDescriptionInput = document.getElementById('website-description');
-        const websiteVersionInput = document.getElementById('website-version');
-        const adminWebsiteName = document.getElementById('admin-website-name');
-        const endpointsDocsAccordion = document.getElementById('endpoints-docs-accordion');
-        const saveSystemSettingsBtn = document.getElementById('save-system-settings');
-        const docEditModal = document.getElementById('doc-edit-modal');
-        const docEditForm = document.getElementById('doc-edit-form');
-        const docCloseModalBtn = document.querySelector('#doc-edit-modal .close-modal');
-        const cancelDocEditBtn = document.getElementById('cancel-doc-edit');
-        const endpointModalTitle = document.getElementById('endpoint-modal-title');
-        const endpointIdInput = document.getElementById('endpoint-id');
-        const animatedElements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .zoom-in');
+    <div class="main-content">
+      <!-- Dashboard Section -->
+      <div id="dashboard" class="section">
+          <h2 class="text-2xl font-bold mb-6">Dashboard Overview</h2>
+          
+          <div class="stats-grid">
+              <div class="stat-card">
+                  <h3>Total Requests (24h)</h3>
+                  <p>24,589</p>
+              </div>
+              <div class="stat-card">
+                  <h3>Active Users</h3>
+                  <p>1,234</p>
+              </div>
+              <div class="stat-card">
+                  <h3>Error Rate</h3>
+                  <p>0.8%</p>
+              </div>
+              <div class="stat-card">
+                  <h3>Avg Response Time</h3>
+                  <p>245ms</p>
+              </div>
+          </div>
 
-        // Data
-        let endpoints = [];
-        let websiteInfo = {
-            name: 'API Endpoint Manager',
-            description: 'Manage your API endpoints easily',
-            version: '1.0.0'
-        };
-        let editingEndpointId = null;
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="card">
+                  <h3 class="text-lg font-semibold mb-4">Request Volume</h3>
+                  <canvas id="requestChart"></canvas>
+              </div>
+              <div class="card">
+                  <h3 class="text-lg font-semibold mb-4">Response Times</h3>
+                  <canvas id="responseChart"></canvas>
+              </div>
+          </div>
+      </div>
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-            setupEventListeners();
-            initScrollAnimation();
-        });
+      <!-- Endpoints Section -->
+      <div id="endpoints" class="section hidden">
+          <div class="flex justify-between items-center mb-6">
+              <h2 class="text-2xl font-bold">API Endpoints</h2>
+              <button class="btn btn-primary" onclick="showAddEndpointModal()">
+                  Add Endpoint
+              </button>
+          </div>
+          
+          <div class="card">
+              <table class="w-full">
+                  <thead>
+                      <tr>
+                          <th>Endpoint</th>
+                          <th>Method</th>
+                          <th>Status</th>
+                          <th>Rate Limit</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td>/api/v1/users</td>
+                          <td>GET</td>
+                          <td><span class="badge badge-success">Active</span></td>
+                          <td>100/min</td>
+                          <td>
+                              <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                              <button class="text-red-600 hover:text-red-800">Delete</button>
+                          </td>
+                      </tr>
+                      <!-- Add more endpoints here -->
+                  </tbody>
+              </table>
+          </div>
+      </div>
 
-        // Load Data
-        function loadData() {
-            // Load website info from localStorage
-            const storedInfo = localStorage.getItem('websiteInfo');
-            if (storedInfo) {
-                websiteInfo = JSON.parse(storedInfo);
-                updateWebsiteInfoForm();
-            }
-            
-            // Simulate loading endpoints
-            setTimeout(() => {
-                // Check if endpoints exist in localStorage
-                const storedEndpoints = localStorage.getItem('endpoints');
-                if (storedEndpoints) {
-                    endpoints = JSON.parse(storedEndpoints);
-                } else {
-                    // Sample data if none exists
-                    endpoints = [
-                        { id: 1, name: 'Get Users', method: 'GET', url: '/api/users', status: 'active', description: 'Retrieve all users' },
-                        { id: 2, name: 'Create User', method: 'POST', url: '/api/users', status: 'active', description: 'Create a new user' },
-                        { id: 3, name: 'Update User', method: 'PUT', url: '/api/users/:id', status: 'active', description: 'Update an existing user' },
-                        { id: 4, name: 'Delete User', method: 'DELETE', url: '/api/users/:id', status: 'inactive', description: 'Delete a user' },
-                        { id: 5, name: 'Get Products', method: 'GET', url: '/api/products', status: 'active', description: 'Retrieve all products' },
-                    ];
-                    saveEndpoints();
-                }
-                
-                renderEndpoints();
-                renderEndpointDocs();
-                adminEndpointsLoading.style.display = 'none';
-                adminEndpointsTableContainer.style.display = 'block';
-            }, 1000);
-        }
+      <!-- Users Section -->
+      <div id="users" class="section hidden">
+          <div class="flex justify-between items-center mb-6">
+              <h2 class="text-2xl font-bold">User Access Management</h2>
+              <button class="btn btn-primary" onclick="showAddUserModal()">
+                  Add User
+              </button>
+          </div>
+          
+          <div class="card">
+              <table class="w-full">
+                  <thead>
+                      <tr>
+                          <th>Username</th>
+                          <th>Access Level</th>
+                          <th>Status</th>
+                          <th>Last Active</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td>john.doe</td>
+                          <td>Admin</td>
+                          <td><span class="badge badge-success">Active</span></td>
+                          <td>2023-10-15 14:30</td>
+                          <td>
+                              <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                              <button class="text-red-600 hover:text-red-800">Deactivate</button>
+                          </td>
+                      </tr>
+                      <!-- Add more users here -->
+                  </tbody>
+              </table>
+          </div>
+      </div>
 
-        // Setup Event Listeners
-        function setupEventListeners() {
-            // Tab switching
-            tabItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const tabId = item.getAttribute('data-tab');
-                    
-                    // Update active tab
-                    tabItems.forEach(tab => tab.classList.remove('active'));
-                    item.classList.add('active');
-                    
-                    // Show active tab content
-                    tabPanes.forEach(pane => pane.classList.remove('active'));
-                    document.getElementById(tabId).classList.add('active');
-                    
-                    // Trigger animations for newly visible tab
-                    setTimeout(() => {
-                        checkScrollAnimation();
-                    }, 100);
-                });
-            });
-            
-            // Modal events
-            adminAddEndpointBtn.addEventListener('click', () => {
-                resetEndpointForm();
-                endpointModalTitle.textContent = 'Add New Endpoint';
-                adminEndpointModal.style.display = 'block';
-            });
-            
-            adminCloseModalBtn.addEventListener('click', () => {
-                adminEndpointModal.style.display = 'none';
-            });
-            
-            adminCancelEndpointBtn.addEventListener('click', () => {
-                adminEndpointModal.style.display = 'none';
-            });
-            
-            // Close modals when clicking outside
-            window.addEventListener('click', (e) => {
-                if (e.target === adminEndpointModal) {
-                    adminEndpointModal.style.display = 'none';
-                }
-                if (e.target === docEditModal) {
-                    docEditModal.style.display = 'none';
-                }
-            });
-            
-            // Endpoint form submission
-            adminEndpointForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const formData = new FormData(adminEndpointForm);
-                const endpointData = {
-                    name: formData.get('name'),
-                    method: formData.get('method'),
-                    url: formData.get('url'),
-                    status: formData.get('status'),
-                    description: formData.get('description')
-                };
-                
-                if (editingEndpointId) {
-                    // Update existing endpoint
-                    const index = endpoints.findIndex(e => e.id === editingEndpointId);
-                    if (index !== -1) {
-                        endpointData.id = editingEndpointId;
-                        endpoints[index] = endpointData;
-                        showNotification(`Endpoint "${endpointData.name}" has been updated.`, 'success');
-                    }
-                } else {
-                    // Add new endpoint
-                    endpointData.id = endpoints.length > 0 ? Math.max(...endpoints.map(e => e.id)) + 1 : 1;
-                    endpoints.push(endpointData);
-                    showNotification(`Endpoint "${endpointData.name}" has been added.`, 'success');
-                }
-                
-                saveEndpoints();
-                renderEndpoints();
-                renderEndpointDocs();
-                
-                adminEndpointModal.style.display = 'none';
-                editingEndpointId = null;
-            });
-            
-            // Website info form submission
-            websiteInfoForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                websiteInfo = {
-                    name: websiteNameInput.value,
-                    description: websiteDescriptionInput.value,
-                    version: websiteVersionInput.value
-                };
-                
-                saveWebsiteInfo();
-                showNotification('Website information has been updated.', 'success');
-            });
-            
-            // System settings save
-            saveSystemSettingsBtn.addEventListener('click', () => {
-                showNotification('System settings have been saved.', 'success');
-            });
-            
-            // Documentation edit form
-            docEditForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const formData = new FormData(docEditForm);
-                const id = parseInt(formData.get('id'));
-                const description = formData.get('description');
-                
-                const endpoint = endpoints.find(e => e.id === id);
-                if (endpoint) {
-                    endpoint.description = description;
-                    saveEndpoints();
-                    renderEndpointDocs();
-                    showNotification('Documentation has been updated.', 'success');
-                }
-                
-                docEditModal.style.display = 'none';
-            });
-            
-            docCloseModalBtn.addEventListener('click', () => {
-                docEditModal.style.display = 'none';
-            });
-            
-            cancelDocEditBtn.addEventListener('click', () => {
-                docEditModal.style.display = 'none';
-            });
-            
-            // Notification close
-            adminNotificationCloseBtn.addEventListener('click', () => {
-                adminNotification.style.display = 'none';
-            });
-            
-            // Scroll event for animations
-            window.addEventListener('scroll', checkScrollAnimation);
-        }
+      <!-- API Keys Section -->
+      <div id="keys" class="section hidden">
+          <div class="flex justify-between items-center mb-6">
+              <h2 class="text-2xl font-bold">API Keys</h2>
+              <button class="btn btn-primary" onclick="showGenerateKeyModal()">
+                  Generate New Key
+              </button>
+          </div>
+          
+          <div class="card">
+              <table class="w-full">
+                  <thead>
+                      <tr>
+                          <th>Key Name</th>
+                          <th>Created</th>
+                          <th>Status</th>
+                          <th>Last Used</th>
+                          <th>Actions</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td>Production Key</td>
+                          <td>2023-10-01</td>
+                          <td><span class="badge badge-success">Active</span></td>
+                          <td>2023-10-15 15:45</td>
+                          <td>
+                              <button class="text-blue-600 hover:text-blue-800 mr-2">Regenerate</button>
+                              <button class="text-red-600 hover:text-red-800">Revoke</button>
+                          </td>
+                      </tr>
+                      <!-- Add more API keys here -->
+                  </tbody>
+              </table>
+          </div>
+      </div>
 
-        // Initialize Scroll Animation
-        function initScrollAnimation() {
-            // Initial check for elements in viewport
-            checkScrollAnimation();
-            
-            // Add animation delay to stagger animations
-            animatedElements.forEach((element, index) => {
-                element.style.transitionDelay = `${index * 0.1}s`;
-            });
-        }
+      <!-- Logs Section -->
+      <div id="logs" class="section hidden">
+          <h2 class="text-2xl font-bold mb-6">Request Logs</h2>
+          
+          <div class="card">
+              <div class="flex justify-between items-center mb-4">
+                  <div class="flex gap-4">
+                      <input type="text" class="form-control w-64" placeholder="Search logs...">
+                      <select class="form-control w-48">
+                          <option>All Status Codes</option>
+                          <option>200 - Success</option>
+                          <option>400 - Bad Request</option>
+                          <option>401 - Unauthorized</option>
+                          <option>403 - Forbidden</option>
+                          <option>404 - Not Found</option>
+                          <option>500 - Server Error</option>
+                      </select>
+                  </div>
+                  <button class="btn btn-primary">Export Logs</button>
+              </div>
+              
+              <table class="w-full">
+                  <thead>
+                      <tr>
+                          <th>Timestamp</th>
+                          <th>Method</th>
+                          <th>Endpoint</th>
+                          <th>Status</th>
+                          <th>Response Time</th>
+                          <th>IP Address</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td>2023-10-15 16:23:45</td>
+                          <td>GET</td>
+                          <td>/api/v1/users</td>
+                          <td><span class="badge badge-success">200</span></td>
+                          <td>145ms</td>
+                          <td>192.168.1.100</td>
+                      </tr>
+                      <!-- Add more logs here -->
+                  </tbody>
+              </table>
+          </div>
+      </div>
 
-        // Check Scroll Animation
-        function checkScrollAnimation() {
-            animatedElements.forEach(element => {
-                if (isElementInViewport(element)) {
-                    element.classList.add('visible');
-                }
-            });
-        }
+      <!-- Settings Section -->
+      <div id="settings" class="section hidden">
+          <h2 class="text-2xl font-bold mb-6">API Settings</h2>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="card">
+                  <h3 class="text-lg font-semibold mb-4">Rate Limiting</h3>
+                  <div class="space-y-4">
+                      <div class="form-group">
+                          <label>Default Rate Limit (requests/minute)</label>
+                          <input type="number" class="form-control" value="100">
+                      </div>
+                      <div class="form-group">
+                          <label>Burst Rate Limit</label>
+                          <input type="number" class="form-control" value="150">
+                      </div>
+                      <button class="btn btn-primary">Save Rate Limits</button>
+                  </div>
+              </div>
 
-        // Check if Element is in Viewport
-        function isElementInViewport(el) {
-            const rect = el.getBoundingClientRect();
-            return (
-                rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.9 &&
-                rect.bottom >= 0
-            );
-        }
+              <div class="card">
+                  <h3 class="text-lg font-semibold mb-4">Security Settings</h3>
+                  <div class="space-y-4">
+                      <div class="form-group">
+                          <label>API Key Expiration (days)</label>
+                          <input type="number" class="form-control" value="90">
+                      </div>
+                      <div class="form-group">
+                          <label>JWT Token Lifetime (hours)</label>
+                          <input type="number" class="form-control" value="24">
+                      </div>
+                      <button class="btn btn-primary">Save Security Settings</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
 
-        // Render Endpoints
-        function renderEndpoints() {
-            adminEndpointsTableBody.innerHTML = '';
-            
-            endpoints.forEach(endpoint => {
-                const row = document.createElement('tr');
-                row.className = 'fade-in';
-                
-                // Method badge class
-                let methodClass = '';
-                switch (endpoint.method) {
-                    case 'GET':
-                        methodClass = 'badge-success';
-                        break;
-                    case 'POST':
-                        methodClass = 'badge-primary';
-                        break;
-                    case 'PUT':
-                        methodClass = 'badge-warning';
-                        break;
-                    case 'DELETE':
-                        methodClass = 'badge-danger';
-                        break;
-                    default:
-                        methodClass = 'badge-info';
-                }
-                
-                row.innerHTML = `
-                    <td>${endpoint.id}</td>
-                    <td>${endpoint.name}</td>
-                    <td><span class="badge ${methodClass}">${endpoint.method}</span></td>
-                    <td>${endpoint.url}</td>
-                    <td>
-                        <label class="switch">
-                            <input type="checkbox" class="status-toggle" data-id="${endpoint.id}" ${endpoint.status === 'active' ? 'checked' : ''}>
-                            <span class="slider round"></span>
-                        </label>
-                    </td>
-                    <td>
-                        <button class="btn btn-primary btn-sm edit-endpoint" data-id="${endpoint.id}">Edit</button>
-                        <button class="btn btn-danger btn-sm delete-endpoint" data-id="${endpoint.id}">Delete</button>
-                    </td>
-                `;
-                
-                adminEndpointsTableBody.appendChild(row);
-            });
-            
-            // Add event listeners to status toggles
-            document.querySelectorAll('.status-toggle').forEach(toggle => {
-                toggle.addEventListener('change', () => {
-                    const id = parseInt(toggle.getAttribute('data-id'));
-                    toggleEndpointStatus(id);
-                });
-            });
-            
-            // Add event listeners to edit buttons
-            document.querySelectorAll('.edit-endpoint').forEach(button => {
-                button.addEventListener('click', () => {
-                    const id = parseInt(button.getAttribute('data-id'));
-                    editEndpoint(id);
-                });
-            });
-            
-            // Add event listeners to delete buttons
-            document.querySelectorAll('.delete-endpoint').forEach(button => {
-                button.addEventListener('click', () => {
-                    const id = parseInt(button.getAttribute('data-id'));
-                    deleteEndpoint(id);
-                });
-            });
-            
-            // Trigger animations for newly added elements
-            setTimeout(() => {
-                checkScrollAnimation();
-            }, 100);
-        }
+  <!-- Login Overlay -->
+  <div id="loginOverlay">
+      <div class="login-container">
+          <h1 class="text-2xl font-bold text-center mb-6">Welcome Back</h1>
+          <form id="loginForm" onsubmit="handleLogin(event)">
+              <div class="form-group">
+                  <label>Username</label>
+                  <input type="text" id="username" class="form-control" required>
+              </div>
+              <div class="form-group">
+                  <label>Password</label>
+                  <input type="password" id="password" class="form-control" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-full">
+                  <span>Login</span>
+                  <div class="spinner" id="loginSpinner"></div>
+              </button>
+          </form>
+      </div>
+  </div>
 
-        // Render Endpoint Documentation
-        function renderEndpointDocs() {
-            endpointsDocsAccordion.innerHTML = '';
-            
-            endpoints.forEach(endpoint => {
-                // Method badge class
-                let methodClass = '';
-                switch (endpoint.method) {
-                    case 'GET':
-                        methodClass = 'badge-success';
-                        break;
-                    case 'POST':
-                        methodClass = 'badge-primary';
-                        break;
-                    case 'PUT':
-                        methodClass = 'badge-warning';
-                        break;
-                    case 'DELETE':
-                        methodClass = 'badge-danger';
-                        break;
-                    default:
-                        methodClass = 'badge-info';
-                }
-                
-                const accordionItem = document.createElement('div');
-                accordionItem.className = 'accordion-item fade-in';
-                
-                accordionItem.innerHTML = `
-                    <div class="accordion-header" data-id="${endpoint.id}">
-                        <div>
-                            <span class="badge ${methodClass}">${endpoint.method}</span>
-                            ${endpoint.name} - ${endpoint.url}
-                        </div>
-                        <span>▼</span>
-                    </div>
-                    <div class="accordion-content" id="accordion-content-${endpoint.id}">
-                        <div class="form-group">
-                            <label>Description</label>
-                            <p>${endpoint.description || 'No description available.'}</p>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Example Request</label>
-                            <div class="code-block">${getExampleCode(endpoint)}</div>
-                        </div>
-                        
-                        <button class="btn btn-primary edit-doc-btn" data-id="${endpoint.id}">Edit Documentation</button>
-                    </div>
-                `;
-                
-                endpointsDocsAccordion.appendChild(accordionItem);
-            });
-            
-            // Add event listeners to accordion headers
-            document.querySelectorAll('.accordion-header').forEach(header => {
-                header.addEventListener('click', () => {
-                    const id = header.getAttribute('data-id');
-                    const content = document.getElementById(`accordion-content-${id}`);
-                    
-                    if (content.classList.contains('active')) {
-                        content.classList.remove('active');
-                        header.querySelector('span:last-child').textContent = '▼';
-                    } else {
-                        content.classList.add('active');
-                        header.querySelector('span:last-child').textContent = '▲';
-                    }
-                });
-            });
-            
-            // Add event listeners to edit documentation buttons
-            document.querySelectorAll('.edit-doc-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    const id = parseInt(button.getAttribute('data-id'));
-                    editDocumentation(id);
-                });
-            });
-            
-            // Trigger animations for newly added elements
-            setTimeout(() => {
-                checkScrollAnimation();
-            }, 100);
-        }
+  <!-- Notification Box -->
+  <div class="notification-box"></div>
 
-        // Get Example Code
-        function getExampleCode(endpoint) {
-            if (endpoint.method === 'GET') {
-                return `fetch('${endpoint.url}')
-  .then(response => response.json())
-  .then(data => console.log(data));`;
-            } else {
-                return `fetch('${endpoint.url}', {
-  method: '${endpoint.method}',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    // request data here
-  })
-})
-  .then(response => response.json())
-  .then(data => console.log(data));`;
-            }
-        }
+  <script>
+      // Session Management
+      const SESSION = {
+          create: (user) => {
+              const session = {
+                  user,
+                  timestamp: new Date().getTime(),
+                  expiresIn: 3600000,
+                  isLoggedIn: true
+              };
+              localStorage.setItem('session', JSON.stringify(session));
+          },
+          
+          check: () => {
+              try {
+                  const session = JSON.parse(localStorage.getItem('session'));
+                  if (!session) return false;
+                  
+                  const now = new Date().getTime();
+                  if (now - session.timestamp > session.expiresIn || !session.isLoggedIn) {
+                      SESSION.clear();
+                      return false;
+                  }
+                  return session;
+              } catch (error) {
+                  SESSION.clear();
+                  return false;
+              }
+          },
+          
+          refresh: () => {
+              const session = SESSION.check();
+              if (session) {
+                  session.timestamp = new Date().getTime();
+                  localStorage.setItem('session', JSON.stringify(session));
+              }
+          },
 
-        // Toggle Endpoint Status
-        function toggleEndpointStatus(id) {
-            const endpoint = endpoints.find(e => e.id === id);
-            if (endpoint) {
-                endpoint.status = endpoint.status === 'active' ? 'inactive' : 'active';
-                saveEndpoints();
-                
-                const statusText = endpoint.status === 'active' ? 'activated' : 'deactivated';
-                showNotification(`Endpoint "${endpoint.name}" has been ${statusText}.`, endpoint.status === 'active' ? 'success' : 'warning');
-            }
-        }
+          clear: () => {
+              localStorage.removeItem('session');
+          }
+      };
 
-        // Edit Endpoint
-        function editEndpoint(id) {
-            const endpoint = endpoints.find(e => e.id === id);
-            if (endpoint) {
-                editingEndpointId = id;
-                endpointIdInput.value = endpoint.id;
-                document.getElementById('admin-endpoint-name').value = endpoint.name;
-                document.getElementById('admin-endpoint-method').value = endpoint.method;
-                document.getElementById('admin-endpoint-url').value = endpoint.url;
-                document.getElementById('admin-endpoint-status').value = endpoint.status;
-                document.getElementById('admin-endpoint-description').value = endpoint.description || '';
-                
-                endpointModalTitle.textContent = 'Edit Endpoint';
-                adminEndpointModal.style.display = 'block';
-            }
-        }
+      // Update DateTime
+      function updateDateTime() {
+          const now = new Date();
+          const formatted = `Current Date and Time (UTC - YYYY-MM-DD HH:MM:SS formatted): ${
+              now.getUTCFullYear()}-${
+              String(now.getUTCMonth() + 1).padStart(2, '0')}-${
+              String(now.getUTCDate()).padStart(2, '0')} ${
+              String(now.getUTCHours()).padStart(2, '0')}:${
+              String(now.getUTCMinutes()).padStart(2, '0')}:${
+              String(now.getUTCSeconds()).padStart(2, '0')}`;
+          
+          document.getElementById('currentDateTime').textContent = formatted;
+          SESSION.refresh();
+      }
 
-        // Reset Endpoint Form
-        function resetEndpointForm() {
-            adminEndpointForm.reset();
-            editingEndpointId = null;
-            endpointIdInput.value = '';
-        }
+      let timeInterval = setInterval(updateDateTime, 1000);
 
-        // Delete Endpoint
-        function deleteEndpoint(id) {
-            const endpoint = endpoints.find(e => e.id === id);
-            if (endpoint) {
-                const name = endpoint.name;
-                endpoints = endpoints.filter(e => e.id !== id);
-                saveEndpoints();
-                renderEndpoints();
-                renderEndpointDocs();
-                
-                showNotification(`Endpoint "${name}" has been deleted.`, 'error');
-            }
-        }
+      // Section Management
+      function showSection(sectionId) {
+          document.querySelectorAll('.section').forEach(section => {
+              section.classList.add('hidden');
+          });
+          document.querySelectorAll('.menu-item').forEach(item => {
+              item.classList.remove('active');
+          });
+          
+          document.getElementById(sectionId).classList.remove('hidden');
+          event.currentTarget.classList.add('active');
+      }
 
-        // Edit Documentation
-        function editDocumentation(id) {
-            const endpoint = endpoints.find(e => e.id === id);
-            if (endpoint) {
-                document.getElementById('doc-endpoint-id').value = endpoint.id;
-                document.getElementById('doc-description').value = endpoint.description || '';
-                
-                docEditModal.style.display = 'block';
-            }
-        }
+      // Charts
+      function initCharts() {
+          // Request Volume Chart
+          const requestCtx = document.getElementById('requestChart').getContext('2d');
+          new Chart(requestCtx, {
+              type: 'line',
+              data: {
+                  labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                  datasets: [{
+                      label: 'Requests',
+                      data: [1200, 1900, 3000, 5000, 4000, 3000],
+                      borderColor: '#4A90E2',
+                      tension: 0.4
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false
+              }
+          });
 
-        // Save Endpoints to localStorage
-        function saveEndpoints() {
-            localStorage.setItem('endpoints', JSON.stringify(endpoints));
-        }
+          // Response Time Chart
+          const responseCtx = document.getElementById('responseChart').getContext('2d');
+          new Chart(responseCtx, {
+              type: 'line',
+              data: {
+                  labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                  datasets: [{
+                      label: 'Response Time (ms)',
+                      data: [200, 220, 250, 230, 210, 200],
+                      borderColor: '#2ECC71',
+                      tension: 0.4
+                  }]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false
+              }
+          });
+      }
 
-        // Save Website Info to localStorage
-        function saveWebsiteInfo() {
-            localStorage.setItem('websiteInfo', JSON.stringify(websiteInfo));
-            updateAdminWebsiteName();
-        }
+      // Notification System
+      function showNotification(message, type = 'success') {
+          const notificationBox = document.querySelector('.notification-box');
+          const notification = document.createElement('div');
+          notification.className = `notification notification-${type}`;
+          
+          const icon = type === 'success' 
+              ? '<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
+              : '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+          
+          notification.innerHTML = `
+              ${icon}
+              <div class="flex-1">
+                  <div class="font-semibold">${type === 'success' ? 'Success' : 'Error'}</div>
+                  <div class="text-sm text-gray-600">${message}</div>
+              </div>
+              <button onclick="this.parentElement.remove()" class="text-gray-400 hover:text-gray-600">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+              </button>
+          `;
+          
+          notificationBox.appendChild(notification);
+          requestAnimationFrame(() => notification.classList.add('show'));
 
-        // Update Website Info Form
-        function updateWebsiteInfoForm() {
-            websiteNameInput.value = websiteInfo.name;
-            websiteDescriptionInput.value = websiteInfo.description;
-            websiteVersionInput.value = websiteInfo.version;
-            updateAdminWebsiteName();
-        }
+          setTimeout(() => {
+              notification.classList.remove('show');
+              setTimeout(() => notification.remove(), 300);
+          }, 5000);
+      }
 
-        // Update Admin Website Name
-        function updateAdminWebsiteName() {
-            if (adminWebsiteName) {
-                adminWebsiteName.textContent = `Admin Panel - ${websiteInfo.name}`;
-            }
-        }
+      // Auth Handlers
+      async function handleLogin(event) {
+          event.preventDefault();
+          
+          const username = document.getElementById('username').value;
+          const password = document.getElementById('password').value;
+          const spinner = document.getElementById('loginSpinner');
+          
+          spinner.style.display = 'block';
 
-        // Show Notification
-        function showNotification(message, type) {
-            adminNotificationMessage.textContent = message;
-            
-            // Set notification color based on type
-            adminNotification.className = 'notification';
-            switch (type) {
-                case 'success':
-                    adminNotification.classList.add('notification-success');
-                    break;
-                case 'error':
-                    adminNotification.classList.add('notification-error');
-                    break;
-                case 'warning':
-                    adminNotification.classList.add('notification-warning');
-                    break;
-                default:
-                    adminNotification.classList.add('notification-info');
-            }
-            
-            adminNotification.style.display = 'block';
-            
-            // Auto hide after 3 seconds
-            setTimeout(() => {
-                adminNotification.style.display = 'none';
-            }, 3000);
-        }
-        
-        // Security Configuration
-        const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes
-        const SESSION_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
-        const SESSION_WARNING_TIME = 5 * 60 * 1000; // 5 minutes before expiry
-        
-        // Session Variables
-        let sessionExpiryTime = 0;
-        let sessionTimerInterval = null;
-        let sessionRefreshTimeout = null;
-        let csrfToken = '';
-        
-        // DOM Elements
-        const securityAlert = document.getElementById('security-alert');
-        const securityAlertMessage = document.getElementById('security-alert-message');
-        const sessionTimerSpan = document.getElementById('session-timer');
-        const logoutButton = document.getElementById('logout-button');
-        
-        // Initialize Security Features
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check authentication before loading admin content
-            if (!checkAuthentication()) {
-                redirectToLogin();
-                return;
-            }
-            
-            // Setup security features
-            setupSecurityFeatures();
-            
-            // Continue with regular admin initialization
-            loadData();
-            setupEventListeners();
-            initScrollAnimation();
-        });
-        
-        // Setup Security Features
-        function setupSecurityFeatures() {
-            // Generate CSRF token for forms
-            generateCSRFToken();
-            
-            // Start session timer
-            startSessionTimer();
-            
-            // Setup session refresh
-            setupSessionRefresh();
-            
-            // Add logout event listener
-            logoutButton.addEventListener('click', logout);
-            
-            // Add security event listeners
-            addSecurityEventListeners();
-        }
-        
-        // Check Authentication
-        function checkAuthentication() {
-            const sessionData = JSON.parse(localStorage.getItem('adminSession') || 'null');
-            
-            if (!sessionData) {
-                return false;
-            }
-            
-            // Check if session has expired
-            if (sessionData.expires < Date.now()) {
-                // Session expired, clear it
-                localStorage.removeItem('adminSession');
-                return false;
-            }
-            
-            // Check if user agent matches (prevent session hijacking)
-            if (sessionData.userAgent !== navigator.userAgent) {
-                // Possible session hijacking attempt, clear session
-                localStorage.removeItem('adminSession');
-                showSecurityAlert('Possible session hijacking detected. Please login again.');
-                return false;
-            }
-            
-            // Set session expiry time for timer
-            sessionExpiryTime = sessionData.expires;
-            
-            return true;
-        }
-        
-        // Start Session Timer
-        function startSessionTimer() {
-            // Clear any existing timer
-            if (sessionTimerInterval) {
-                clearInterval(sessionTimerInterval);
-            }
-            
-            // Update timer immediately
-            updateSessionTimer();
-            
-            // Set interval to update timer every second
-            sessionTimerInterval = setInterval(updateSessionTimer, 1000);
-        }
-        
-        // Update Session Timer
-        function updateSessionTimer() {
-            const now = Date.now();
-            const timeRemaining = Math.max(0, sessionExpiryTime - now);
-            
-            // Format time remaining
-            const minutes = Math.floor(timeRemaining / 60000);
-            const seconds = Math.floor((timeRemaining % 60000) / 1000);
-            sessionTimerSpan.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
-            // Check if session is about to expire
-            if (timeRemaining > 0 && timeRemaining <= SESSION_WARNING_TIME) {
-                sessionTimerSpan.style.color = '#e53e3e';
-                
-                // Show warning if not already shown
-                if (!document.getElementById('session-warning')) {
-                    showSessionWarning();
-                }
-            }
-            
-            // Check if session has expired
-            if (timeRemaining <= 0) {
-                clearInterval(sessionTimerInterval);
-                logout();
-            }
-        }
-        
-        // Show Session Warning
-        function showSessionWarning() {
-            const warningDiv = document.createElement('div');
-            warningDiv.id = 'session-warning';
-            warningDiv.className = 'notification notification-warning';
-            warningDiv.style.display = 'block';
-            
-            warningDiv.innerHTML = `
-                <div class="notification-content">
-                    <span>Your session is about to expire. Would you like to extend it?</span>
-                </div>
-                <div style="margin-top: 10px; text-align: right;">
-                    <button id="extend-session-btn" class="btn btn-primary btn-sm">Extend Session</button>
-                    <button id="ignore-warning-btn" class="btn btn-secondary btn-sm" style="margin-left: 5px;">Ignore</button>
-                </div>
-                <button class="notification-close">&times;</button>
-            `;
-            
-            document.body.appendChild(warningDiv);
-            
-            // Add event listeners
-            document.getElementById('extend-session-btn').addEventListener('click', extendSession);
-            document.getElementById('ignore-warning-btn').addEventListener('click', () => {
-                warningDiv.remove();
-            });
-            document.querySelector('#session-warning .notification-close').addEventListener('click', () => {
-                warningDiv.remove();
-            });
-        }
-        
-        // Setup Session Refresh
-        function setupSessionRefresh() {
-            // Clear any existing timeout
-            if (sessionRefreshTimeout) {
-                clearTimeout(sessionRefreshTimeout);
-            }
-            
-            // Set timeout to refresh session
-            sessionRefreshTimeout = setTimeout(extendSession, SESSION_REFRESH_INTERVAL);
-        }
-        
-        // Extend Session
-        function extendSession() {
-            // Get current session data
-            const sessionData = JSON.parse(localStorage.getItem('adminSession') || 'null');
-            
-            if (!sessionData) {
-                redirectToLogin();
-                return;
-            }
-            
-            // Update expiration time
-            sessionData.expires = Date.now() + SESSION_DURATION;
-            
-            // Update session data
-            localStorage.setItem('adminSession', JSON.stringify(sessionData));
-            
-            // Update session expiry time for timer
-            sessionExpiryTime = sessionData.expires;
-            
-            // Reset session timer color
-            sessionTimerSpan.style.color = '';
-            
-            // Remove session warning if present
-            const sessionWarning = document.getElementById('session-warning');
-            if (sessionWarning) {
-                sessionWarning.remove();
-            }
-            
-            // Setup session refresh again
-            setupSessionRefresh();
-            
-            // Show notification
-            showNotification('Session extended successfully.', 'success');
-        }
-        
-        // Generate CSRF Token
-        function generateCSRFToken() {
-            const token = generateSecureToken(32);
-            csrfToken = token;
-            
-            // Store token in localStorage (in a real app, this would be stored server-side)
-            localStorage.setItem('adminCsrfToken', token);
-            
-            // Add token to all forms
-            addCsrfTokenToForms();
-        }
-        
-        // Add CSRF Token to Forms
-        function addCsrfTokenToForms() {
-            const forms = document.querySelectorAll('form');
-            
-            forms.forEach(form => {
-                // Check if form already has a CSRF token input
-                let tokenInput = form.querySelector('input[name="csrf_token"]');
-                
-                if (!tokenInput) {
-                    // Create token input
-                    tokenInput = document.createElement('input');
-                    tokenInput.type = 'hidden';
-                    tokenInput.name = 'csrf_token';
-                    form.appendChild(tokenInput);
-                }
-                
-                // Set token value
-                tokenInput.value = csrfToken;
-            });
-        }
-        
-        // Verify CSRF Token
-        function verifyCSRFToken(formToken) {
-            return csrfToken && formToken && csrfToken === formToken;
-        }
-        
-        // Generate Secure Token
-        function generateSecureToken(length) {
-            const array = new Uint8Array(length);
-            window.crypto.getRandomValues(array);
-            
-            return Array.from(array)
-                .map(byte => byte.toString(16).padStart(2, '0'))
-                .join('');
-        }
-        
-        // Add Security Event Listeners
-        function addSecurityEventListeners() {
-            // Listen for storage events (detect session tampering)
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'adminSession') {
-                    // Check if session was modified externally
-                    if (!checkAuthentication()) {
-                        showSecurityAlert('Session was modified externally. Please login again.');
-                        setTimeout(redirectToLogin, 3000);
-                    }
-                }
-            });
-            
-            // Listen for visibility change (tab switching)
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') {
-                    // Verify session when tab becomes visible again
-                    if (!checkAuthentication()) {
-                        redirectToLogin();
-                    }
-                }
-            });
-            
-            // Add form submission security
-            addFormSubmissionSecurity();
-        }
-        
-        // Add Form Submission Security
-        function addFormSubmissionSecurity() {
-            const forms = document.querySelectorAll('form');
-            
-            forms.forEach(form => {
-                // Add submit event listener to verify CSRF token
-                form.addEventListener('submit', (e) => {
-                    const formToken = form.querySelector('input[name="csrf_token"]')?.value;
-                    
-                    if (!verifyCSRFToken(formToken)) {
-                        e.preventDefault();
-                        showSecurityAlert('Security validation failed. Please refresh the page and try again.');
-                        return false;
-                    }
-                    
-                    // Sanitize form inputs
-                    const inputs = form.querySelectorAll('input, textarea, select');
-                    inputs.forEach(input => {
-                        if (input.type !== 'hidden' && input.type !== 'checkbox' && input.type !== 'radio') {
-                            input.value = sanitizeString(input.value);
-                        }
-                    });
-                });
-            });
-        }
-        
-        // Sanitize String (prevent XSS)
-        function sanitizeString(str) {
-            if (typeof str !== 'string') return str;
-            
-            // Replace potentially dangerous characters
-            return str.replace(/[<>&"']/g, function(c) {
-                return {
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '&': '&amp;',
-                    '"': '&quot;',
-                    "'": '&#39;'
-                }[c];
-            });
-        }
-        
-        // Show Security Alert
-        function showSecurityAlert(message) {
-            securityAlertMessage.textContent = message;
-            securityAlert.style.display = 'block';
-            
-            // Auto hide after 5 seconds
-            setTimeout(() => {
-                securityAlert.style.display = 'none';
-            }, 5000);
-        }
-        
-        // Logout
-        function logout() {
-            // Clear session data
-            localStorage.removeItem('adminSession');
-            localStorage.removeItem('adminCsrfToken');
-            
-            // Redirect to login page
-            redirectToLogin();
-        }
-        
-        // Redirect to Login
-        function redirectToLogin() {
-            window.location.href = 'admin-login.html';
-        }
-        
-        // Override the existing endpoint form submission to include security checks
-        const originalAdminEndpointFormSubmit = adminEndpointForm.onsubmit;
-        adminEndpointForm.onsubmit = function(e) {
-            e.preventDefault();
-            
-            // Verify CSRF token
-            const formToken = this.querySelector('input[name="csrf_token"]')?.value;
-            if (!verifyCSRFToken(formToken)) {
-                showSecurityAlert('Security validation failed. Please refresh the page and try again.');
-                return false;
-            }
-            
-            // Sanitize inputs
-            const endpointName = sanitizeString(document.getElementById('admin-endpoint-name').value);
-            const endpointUrl = sanitizeString(document.getElementById('admin-endpoint-url').value);
-            const endpointDescription = sanitizeString(document.getElementById('admin-endpoint-description').value);
-            
-            // Update input values with sanitized versions
-            document.getElementById('admin-endpoint-name').value = endpointName;
-            document.getElementById('admin-endpoint-url').value = endpointUrl;
-            document.getElementById('admin-endpoint-description').value = endpointDescription;
-            
-            // Continue with original form submission logic
-            const formData = new FormData(adminEndpointForm);
-            const endpointData = {
-                name: formData.get('name'),
-                method: formData.get('method'),
-                url: formData.get('url'),
-                status: formData.get('status'),
-                description: formData.get('description')
-            };
-            
-            if (editingEndpointId) {
-                // Update existing endpoint
-                const index = endpoints.findIndex(e => e.id === editingEndpointId);
-                if (index !== -1) {
-                    endpointData.id = editingEndpointId;
-                    endpoints[index] = endpointData;
-                    showNotification(`Endpoint "${endpointData.name}" has been updated.`, 'success');
-                }
-            } else {
-                // Add new endpoint
-                endpointData.id = endpoints.length > 0 ? Math.max(...endpoints.map(e => e.id)) + 1 : 1;
-                endpoints.push(endpointData);
-                showNotification(`Endpoint "${endpointData.name}" has been added.`, 'success');
-            }
-            
-            saveEndpoints();
-            renderEndpoints();
-            renderEndpointDocs();
-            
-            adminEndpointModal.style.display = 'none';
-            editingEndpointId = null;
-        };
-        
-        // Override the existing documentation edit form submission
-        const originalDocEditFormSubmit = docEditForm.onsubmit;
-        docEditForm.onsubmit = function(e) {
-            e.preventDefault();
-            
-            // Verify CSRF token
-            const formToken = this.querySelector('input[name="csrf_token"]')?.value;
-            if (!verifyCSRFToken(formToken)) {
-                showSecurityAlert('Security validation failed. Please refresh the page and try again.');
-                return false;
-            }
-            
-            // Sanitize description
-            const description = sanitizeString(document.getElementById('doc-description').value);
-            document.getElementById('doc-description').value = description;
-            
-            // Continue with original form submission logic
-            const formData = new FormData(docEditForm);
-            const id = parseInt(formData.get('id'));
-            
-            const endpoint = endpoints.find(e => e.id === id);
-            if (endpoint) {
-                endpoint.description = description;
-                saveEndpoints();
-                renderEndpointDocs();
-                showNotification('Documentation has been updated.', 'success');
-            }
-            
-            docEditModal.style.display = 'none';
-        };
-        
-        // Override the existing website info form submission
-        const originalWebsiteInfoFormSubmit = websiteInfoForm.onsubmit;
-        websiteInfoForm.onsubmit = function(e) {
-            e.preventDefault();
-            
-            // Verify CSRF token
-            const formToken = this.querySelector('input[name="csrf_token"]')?.value;
-            if (!verifyCSRFToken(formToken)) {
-                showSecurityAlert('Security validation failed. Please refresh the page and try again.');
-                return false;
-            }
-            
-            // Sanitize inputs
-            const name = sanitizeString(websiteNameInput.value);
-            const description = sanitizeString(websiteDescriptionInput.value);
-            const version = sanitizeString(websiteVersionInput.value);
-            
-            // Update input values with sanitized versions
-            websiteNameInput.value = name;
-            websiteDescriptionInput.value = description;
-            websiteVersionInput.value = version;
-            
-            // Continue with original form submission logic
-            websiteInfo = {
-                name: name,
-                description: description,
-                version: version
-            };
-            
-            saveWebsiteInfo();
-            showNotification('Website information has been updated.', 'success');
-        };
-        
-        // Add CSRF token to forms when the page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            // Add CSRF token to all forms
-            setTimeout(addCsrfTokenToForms, 500);
-        });
-    </script>
+          try {
+              await new Promise(resolve => setTimeout(resolve, 1000));
+
+              if (username === 'admin' && password === '123') {
+                  SESSION.create({
+                      username: username,
+                      role: 'admin',
+                      lastLogin: new Date().toISOString()
+                  });
+
+                  showNotification('Login successful!', 'success');
+                  checkAuth();
+                  initCharts();
+              } else {
+                  showNotification('Invalid credentials!', 'error');
+              }
+          } catch (error) {
+              showNotification('An error occurred!', 'error');
+          } finally {
+              spinner.style.display = 'none';
+          }
+      }
+
+      function handleLogout() {
+          SESSION.clear();
+          showNotification('Logged out successfully', 'success');
+          checkAuth();
+      }
+
+      function checkAuth() {
+          const session = SESSION.check();
+          const loginOverlay = document.getElementById('loginOverlay');
+          const mainContent = document.querySelector('.main-content');
+          const sidebar = document.querySelector('.sidebar');
+          const userInfoBar = document.querySelector('.user-info-bar');
+
+          if (!session?.isLoggedIn) {
+              loginOverlay.style.display = 'flex';
+              mainContent.style.display = 'none';
+              sidebar.style.display = 'none';
+              userInfoBar.style.display = 'none';
+          } else {
+              loginOverlay.style.display = 'none';
+              mainContent.style.display = 'block';
+              sidebar.style.display = 'block';
+              userInfoBar.style.display = 'flex';
+              document.getElementById('userLoginInfo').textContent = `Current User's Login: ${session.user.username}`;
+          }
+      }
+
+      // Initialize
+      window.addEventListener('DOMContentLoaded', () => {
+          checkAuth();
+          updateDateTime();
+          const session = SESSION.check();
+          if (session?.isLoggedIn) {
+              initCharts();
+          }
+      });
+
+      // Cleanup
+      window.addEventListener('beforeunload', () => {
+          clearInterval(timeInterval);
+      });
+  </script>
 </body>
 </html>
