@@ -3,223 +3,2098 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self'; connect-src 'self'; img-src 'self'; frame-src 'self';">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <title>API Manager - Admin Panel</title>
-    
-    <!-- Chakra UI CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@chakra-ui/cdn@2.3.0/dist/chakra.min.js"></script>
-    
-    <!-- DaisyUI and Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet">
+    <!-- DaisyUI and Tailwind CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        .text-muted {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation Bar - Now with rounded corners */
+        .navbar {
+            background-color: #3182ce;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 1rem 1rem;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        /* Admin Theme */
+        .admin-theme .navbar {
+            background-color: #805ad5;
+        }
+
+        .admin-theme .btn-primary {
+            background-color: #805ad5;
+            border-color: #805ad5;
+        }
+
+        .admin-theme .btn-primary:hover {
+            background-color: #6b46c1;
+            border-color: #6b46c1;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+            margin-bottom: 60px; /* Space for bottom menu */
+        }
+
+        /* Cards - Now with rounded corners */
+        .card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Buttons - Enhanced hover effects */
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, transform 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #3182ce;
+            border-color: #3182ce;
+        }
+
+        .btn-primary:hover {
+            background-color: #2b6cb0;
+            border-color: #2b6cb0;
+        }
+
+        .btn-secondary {
+            color: #fff;
+            background-color: #718096;
+            border-color: #718096;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4a5568;
+            border-color: #4a5568;
+        }
+
+        .btn-light {
+            color: #212529;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: transparent;
+        }
+
+        .btn-light:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-danger {
+            color: #fff;
+            background-color: #e53e3e;
+            border-color: #e53e3e;
+        }
+
+        .btn-danger:hover {
+            background-color: #c53030;
+            border-color: #c53030;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.375rem;
+        }
+
+        /* Tabs - Rounded corners */
+        .tabs {
+            margin-top: 2rem;
+        }
+
+        .tab-header {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 1rem;
+        }
+
+        .tab-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            border-radius: 0.5rem 0.5rem 0 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .tab-item:hover {
+            color: #3182ce;
+            background-color: rgba(49, 130, 206, 0.05);
+        }
+
+        .tab-item.active {
+            color: #3182ce;
+            border-bottom-color: #3182ce;
+            background-color: rgba(49, 130, 206, 0.1);
+        }
+
+        .admin-theme .tab-item:hover,
+        .admin-theme .tab-item.active {
+            color: #805ad5;
+            border-bottom-color: #805ad5;
+            background-color: rgba(128, 90, 213, 0.1);
+        }
+
+        .tab-pane {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .tab-pane.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tab-header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        /* Tables - Rounded corners */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table th {
+            background-color: #f7fafc;
+            font-weight: 600;
+        }
+
+        .data-table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #f7fafc;
+        }
+
+        /* Badges - Rounded corners */
+        .badge {
+            display: inline-block;
+            padding: 0.25em 0.4em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge-success {
+            color: #fff;
+            background-color: #38a169;
+        }
+
+        .badge-danger {
+            color: #fff;
+            background-color: #e53e3e;
+        }
+
+        .badge-primary {
+            color: #fff;
+            background-color: #3182ce;
+        }
+
+        .badge-warning {
+            color: #fff;
+            background-color: #dd6b20;
+        }
+
+        .badge-info {
+            color: #fff;
+            background-color: #00b5d8;
+        }
+
+        /* Forms - Rounded corners */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            display: block;
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: 0.5rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, transform 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            color: #495057;
+            background-color: #fff;
+            border-color: #a3bffa;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(66, 153, 225, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .admin-theme .form-group input:focus,
+        .admin-theme .form-group select:focus,
+        .admin-theme .form-group textarea:focus {
+            border-color: #d6bcfa;
+            box-shadow: 0 0 0 0.2rem rgba(128, 90, 213, 0.25);
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        /* Switch Toggle - Rounded corners */
+        .switch-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #3182ce;
+        }
+
+        .admin-theme input:checked + .slider {
+            background-color: #805ad5;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #3182ce;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Bottom Menu - Rounded corners */
+        .bottom-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #3182ce;
+            color: white;
+            padding: 0.75rem 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        .admin-theme .bottom-menu {
+            background-color: #805ad5;
+        }
+
+        .bottom-menu .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .menu-item {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* Modal - Rounded corners */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .close-modal {
+            color: #aaa;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #333;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 1rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 0 0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* Notification - Rounded corners */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            width: 300px;
+            animation: notificationFadeIn 0.3s;
+        }
+
+        @keyframes notificationFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .notification-close:hover {
+            color: #333;
+            transform: rotate(90deg);
+        }
+
+        /* Notification Colors */
+        .notification-success {
+            border-left: 4px solid #38a169;
+            background-color: #f0fff4;
+        }
+
+        .notification-error {
+            border-left: 4px solid #e53e3e;
+            background-color: #fff5f5;
+        }
+
+        .notification-warning {
+            border-left: 4px solid #dd6b20;
+            background-color: #fffaf0;
+        }
+
+        .notification-info {
+            border-left: 4px solid #3182ce;
+            background-color: #ebf8ff;
+        }
+
+        /* Accordion - Rounded corners */
+        .accordion-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .accordion-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .accordion-header {
+            background-color: #f7fafc;
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0.75rem 0.75rem 0 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background-color: #edf2f7;
+        }
+
+        .accordion-content {
+            padding: 1rem;
+            display: none;
+            border-top: 1px solid #e2e8f0;
+            animation: accordionFadeIn 0.5s ease;
+        }
+
+        @keyframes accordionFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
+
+        /* Loading Spinner */
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #3182ce;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        .admin-theme .loading-spinner {
+            border-top-color: #805ad5;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Code Block - Rounded corners */
+        .code-block {
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        /* Scroll Animation Classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .zoom-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .zoom-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .tab-header {
+                flex-wrap: wrap;
+            }
+            
+            .tab-item {
+                flex: 1 0 auto;
+                text-align: center;
+                padding: 0.5rem;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .bottom-menu .container {
+                justify-content: space-around;
+            }
+            
+            .menu-item {
+                margin: 0;
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tab-header-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .tab-header-actions button {
+                margin-top: 0.5rem;
+            }
+            
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 0.9rem;
+            }
+            
+            .btn {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Add new styles for security features */
+        .session-info {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 0.8rem;
+            color: #6c757d;
+            z-index: 90;
+        }
+        
+        .logout-btn {
+            margin-left: 1rem;
+            color: #805ad5;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .logout-btn:hover {
+            text-decoration: underline;
+        }
+        
+        .security-alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff5f5;
+            border-left: 4px solid #e53e3e;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+        }
+    </style>
 </head>
-<body>
-    <nav class="bg-base-200 shadow-lg">
-        <div class="container mx-auto px-6 py-3">
-            <div class="flex items-center justify-between">
-                <div class="text-xl font-bold">Admin Panel</div>
-                <a href="index.html" class="btn btn-primary">Back to Dashboard</a>
+<body class="admin-theme">
+    <!-- Security Alert -->
+    <div id="security-alert" class="security-alert">
+        <div id="security-alert-message">Security issue detected!</div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="container">
+            <h1 id="admin-website-name">Admin Panel - API Endpoint Manager</h1>
+            <div>
+                <button class="btn btn-light" id="logout-button">Logout</button>
+                <button class="btn btn-light" onclick="window.location.href='index.html'">Back to Main</button>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <main class="container mx-auto px-6 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- API Configuration -->
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                    <h2 class="card-title">Website Configuration</h2>
-                    <form id="config-form" class="space-y-4">
-                        <div class="form-control">
-                            <label class="label">Website Name</label>
-                            <input type="text" id="website-name" class="input input-bordered" />
-                        </div>
-                        <div class="form-control">
-                            <label class="label">API Base URL</label>
-                            <input type="text" id="api-base-url" class="input input-bordered" />
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </form>
-                </div>
+    <!-- Session Info -->
+    <div class="session-info">
+        Session expires in: <span id="session-timer">30:00</span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title fade-in">API Management Administration</h1>
+        
+        <!-- Tabs -->
+        <div class="tabs fade-in">
+            <div class="tab-header">
+                <div class="tab-item active" data-tab="endpoints">Endpoints</div>
+                <div class="tab-item" data-tab="website-settings">Website Settings</div>
+                <div class="tab-item" data-tab="api-docs">API Documentation</div>
+                <div class="tab-item" data-tab="system">System</div>
             </div>
-
-            <!-- Endpoint Management -->
-            <div class="card bg-base-100 shadow-xl">
-                <div class="card-body">
-                    <h2 class="card-title">Endpoint Management</h2>
-                    <div id="endpoints-manager" class="space-y-4">
-                        <!-- Endpoints will be loaded here -->
+            
+            <div class="tab-content">
+                <!-- Endpoints Tab -->
+                <div class="tab-pane active" id="endpoints">
+                    <div class="tab-header-actions slide-in-left">
+                        <h2>Manage API Endpoints</h2>
+                        <button class="btn btn-primary" id="admin-add-endpoint-btn">Add New Endpoint</button>
                     </div>
-                    <button class="btn btn-secondary" onclick="addNewEndpoint()">Add New Endpoint</button>
+                    
+                    <div id="admin-endpoints-loading" class="loading-container">
+                        <div class="loading-spinner"></div>
+                    </div>
+                    
+                    <div id="admin-endpoints-table-container" class="slide-in-right" style="display: none;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Method</th>
+                                    <th>URL</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-endpoints-table-body">
+                                <!-- Endpoints will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Website Settings Tab -->
+                <div class="tab-pane" id="website-settings">
+                    <h2 class="slide-in-left">Website Settings</h2>
+                    <div class="card zoom-in">
+                        <form id="website-info-form">
+                            <div class="form-group">
+                                <label for="website-name">Website Name</label>
+                                <input type="text" id="website-name" name="name" value="API Endpoint Manager">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="website-description">Description</label>
+                                <textarea id="website-description" name="description">Manage your API endpoints easily</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="website-version">Version</label>
+                                <input type="text" id="website-version" name="version" value="1.0.0">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- API Documentation Tab -->
+                <div class="tab-pane" id="api-docs">
+                    <h2 class="slide-in-left">API Documentation Management</h2>
+                    <div class="card zoom-in">
+                        <p>Manage the documentation for your API endpoints. This information will be displayed to users.</p>
+                        
+                        <div class="accordion" id="endpoints-docs-accordion">
+                            <!-- Endpoint documentation items will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- System Tab -->
+                <div class="tab-pane" id="system">
+                    <h2 class="slide-in-left">System Settings</h2>
+                    <div class="card zoom-in">
+                        <p>Configure system-wide settings for your API management system.</p>
+                        
+                        <div class="form-group switch-group fade-in">
+                            <label for="notifications-switch">Enable Notifications</label>
+                            <label class="switch">
+                                <input type="checkbox" id="notifications-switch" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group switch-group fade-in">
+                            <label for="auto-save-switch">Auto-save Changes</label>
+                            <label class="switch">
+                                <input type="checkbox" id="auto-save-switch">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group fade-in">
+                            <label for="backup-frequency">Data Backup Frequency</label>
+                            <select id="backup-frequency">
+                                <option value="hourly">Hourly</option>
+                                <option value="daily" selected>Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                        
+                        <button class="btn btn-primary fade-in" id="save-system-settings">Save Settings</button>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
+    
+    <!-- Bottom Menu -->
+    <footer class="bottom-menu">
+        <div class="container">
+            <button class="menu-item">Endpoints</button>
+            <button class="menu-item">Settings</button>
+            <button class="menu-item">Documentation</button>
+            <button class="menu-item">System</button>
+        </div>
+    </footer>
+    
+    <!-- Endpoint Modal -->
+    <div class="modal" id="admin-endpoint-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="endpoint-modal-title">Add New Endpoint</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="admin-endpoint-form">
+                    <input type="hidden" id="endpoint-id" name="id">
+                    
+                    <div class="form-group">
+                        <label for="admin-endpoint-name">Endpoint Name <span class="required">*</span></label>
+                        <input type="text" id="admin-endpoint-name" name="name" placeholder="e.g. Get Users" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-endpoint-method">Method <span class="required">*</span></label>
+                        <select id="admin-endpoint-method" name="method" required>
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="PATCH">PATCH</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-endpoint-url">URL <span class="required">*</span></label>
+                        <input type="text" id="admin-endpoint-url" name="url" placeholder="e.g. /api/users" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-endpoint-status">Status</label>
+                        <select id="admin-endpoint-status" name="status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-endpoint-description">Description</label>
+                        <textarea id="admin-endpoint-description" name="description" placeholder="Describe what this endpoint does"></textarea>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" id="admin-cancel-endpoint">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Documentation Edit Modal -->
+    <div class="modal" id="doc-edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Documentation</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="doc-edit-form">
+                    <input type="hidden" id="doc-endpoint-id" name="id">
+                    
+                    <div class="form-group">
+                        <label for="doc-description">Description</label>
+                        <textarea id="doc-description" name="description" placeholder="Describe what this endpoint does"></textarea>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Documentation</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-doc-edit">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="admin-notification">
+        <div class="notification-content">
+            <span id="admin-notification-message"></span>
+        </div>
+        <button class="notification-close">&times;</button>
+    </div>
+    
+    <script>
+        // DOM Elements
+        const tabItems = document.querySelectorAll('.tab-item');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        const adminEndpointsTableBody = document.getElementById('admin-endpoints-table-body');
+        const adminEndpointsLoading = document.getElementById('admin-endpoints-loading');
+        const adminEndpointsTableContainer = document.getElementById('admin-endpoints-table-container');
+        const adminAddEndpointBtn = document.getElementById('admin-add-endpoint-btn');
+        const adminEndpointModal = document.getElementById('admin-endpoint-modal');
+        const adminCloseModalBtn = document.querySelector('#admin-endpoint-modal .close-modal');
+        const adminCancelEndpointBtn = document.getElementById('admin-cancel-endpoint');
+        const adminEndpointForm = document.getElementById('admin-endpoint-form');
+        const adminNotification = document.getElementById('admin-notification');
+        const adminNotificationMessage = document.getElementById('admin-notification-message');
+        const adminNotificationCloseBtn = document.querySelector('#admin-notification .notification-close');
+        const websiteInfoForm = document.getElementById('website-info-form');
+        const websiteNameInput = document.getElementById('website-name');
+        const websiteDescriptionInput = document.getElementById('website-description');
+        const websiteVersionInput = document.getElementById('website-version');
+        const adminWebsiteName = document.getElementById('admin-website-name');
+        const endpointsDocsAccordion = document.getElementById('endpoints-docs-accordion');
+        const saveSystemSettingsBtn = document.getElementById('save-system-settings');
+        const docEditModal = document.getElementById('doc-edit-modal');
+        const docEditForm = document.getElementById('doc-edit-form');
+        const docCloseModalBtn = document.querySelector('#doc-edit-modal .close-modal');
+        const cancelDocEditBtn = document.getElementById('cancel-doc-edit');
+        const endpointModalTitle = document.getElementById('endpoint-modal-title');
+        const endpointIdInput = document.getElementById('endpoint-id');
+        const animatedElements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .zoom-in');
 
-    <script src="admin.js"></script>
+        // Data
+        let endpoints = [];
+        let websiteInfo = {
+            name: 'API Endpoint Manager',
+            description: 'Manage your API endpoints easily',
+            version: '1.0.0'
+        };
+        let editingEndpointId = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            setupEventListeners();
+            initScrollAnimation();
+        });
+
+        // Load Data
+        function loadData() {
+            // Load website info from localStorage
+            const storedInfo = localStorage.getItem('websiteInfo');
+            if (storedInfo) {
+                websiteInfo = JSON.parse(storedInfo);
+                updateWebsiteInfoForm();
+            }
+            
+            // Simulate loading endpoints
+            setTimeout(() => {
+                // Check if endpoints exist in localStorage
+                const storedEndpoints = localStorage.getItem('endpoints');
+                if (storedEndpoints) {
+                    endpoints = JSON.parse(storedEndpoints);
+                } else {
+                    // Sample data if none exists
+                    endpoints = [
+                        { id: 1, name: 'Get Users', method: 'GET', url: '/api/users', status: 'active', description: 'Retrieve all users' },
+                        { id: 2, name: 'Create User', method: 'POST', url: '/api/users', status: 'active', description: 'Create a new user' },
+                        { id: 3, name: 'Update User', method: 'PUT', url: '/api/users/:id', status: 'active', description: 'Update an existing user' },
+                        { id: 4, name: 'Delete User', method: 'DELETE', url: '/api/users/:id', status: 'inactive', description: 'Delete a user' },
+                        { id: 5, name: 'Get Products', method: 'GET', url: '/api/products', status: 'active', description: 'Retrieve all products' },
+                    ];
+                    saveEndpoints();
+                }
+                
+                renderEndpoints();
+                renderEndpointDocs();
+                adminEndpointsLoading.style.display = 'none';
+                adminEndpointsTableContainer.style.display = 'block';
+            }, 1000);
+        }
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Tab switching
+            tabItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const tabId = item.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabItems.forEach(tab => tab.classList.remove('active'));
+                    item.classList.add('active');
+                    
+                    // Show active tab content
+                    tabPanes.forEach(pane => pane.classList.remove('active'));
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Trigger animations for newly visible tab
+                    setTimeout(() => {
+                        checkScrollAnimation();
+                    }, 100);
+                });
+            });
+            
+            // Modal events
+            adminAddEndpointBtn.addEventListener('click', () => {
+                resetEndpointForm();
+                endpointModalTitle.textContent = 'Add New Endpoint';
+                adminEndpointModal.style.display = 'block';
+            });
+            
+            adminCloseModalBtn.addEventListener('click', () => {
+                adminEndpointModal.style.display = 'none';
+            });
+            
+            adminCancelEndpointBtn.addEventListener('click', () => {
+                adminEndpointModal.style.display = 'none';
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === adminEndpointModal) {
+                    adminEndpointModal.style.display = 'none';
+                }
+                if (e.target === docEditModal) {
+                    docEditModal.style.display = 'none';
+                }
+            });
+            
+            // Endpoint form submission
+            adminEndpointForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(adminEndpointForm);
+                const endpointData = {
+                    name: formData.get('name'),
+                    method: formData.get('method'),
+                    url: formData.get('url'),
+                    status: formData.get('status'),
+                    description: formData.get('description')
+                };
+                
+                if (editingEndpointId) {
+                    // Update existing endpoint
+                    const index = endpoints.findIndex(e => e.id === editingEndpointId);
+                    if (index !== -1) {
+                        endpointData.id = editingEndpointId;
+                        endpoints[index] = endpointData;
+                        showNotification(`Endpoint "${endpointData.name}" has been updated.`, 'success');
+                    }
+                } else {
+                    // Add new endpoint
+                    endpointData.id = endpoints.length > 0 ? Math.max(...endpoints.map(e => e.id)) + 1 : 1;
+                    endpoints.push(endpointData);
+                    showNotification(`Endpoint "${endpointData.name}" has been added.`, 'success');
+                }
+                
+                saveEndpoints();
+                renderEndpoints();
+                renderEndpointDocs();
+                
+                adminEndpointModal.style.display = 'none';
+                editingEndpointId = null;
+            });
+            
+            // Website info form submission
+            websiteInfoForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                websiteInfo = {
+                    name: websiteNameInput.value,
+                    description: websiteDescriptionInput.value,
+                    version: websiteVersionInput.value
+                };
+                
+                saveWebsiteInfo();
+                showNotification('Website information has been updated.', 'success');
+            });
+            
+            // System settings save
+            saveSystemSettingsBtn.addEventListener('click', () => {
+                showNotification('System settings have been saved.', 'success');
+            });
+            
+            // Documentation edit form
+            docEditForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(docEditForm);
+                const id = parseInt(formData.get('id'));
+                const description = formData.get('description');
+                
+                const endpoint = endpoints.find(e => e.id === id);
+                if (endpoint) {
+                    endpoint.description = description;
+                    saveEndpoints();
+                    renderEndpointDocs();
+                    showNotification('Documentation has been updated.', 'success');
+                }
+                
+                docEditModal.style.display = 'none';
+            });
+            
+            docCloseModalBtn.addEventListener('click', () => {
+                docEditModal.style.display = 'none';
+            });
+            
+            cancelDocEditBtn.addEventListener('click', () => {
+                docEditModal.style.display = 'none';
+            });
+            
+            // Notification close
+            adminNotificationCloseBtn.addEventListener('click', () => {
+                adminNotification.style.display = 'none';
+            });
+            
+            // Scroll event for animations
+            window.addEventListener('scroll', checkScrollAnimation);
+        }
+
+        // Initialize Scroll Animation
+        function initScrollAnimation() {
+            // Initial check for elements in viewport
+            checkScrollAnimation();
+            
+            // Add animation delay to stagger animations
+            animatedElements.forEach((element, index) => {
+                element.style.transitionDelay = `${index * 0.1}s`;
+            });
+        }
+
+        // Check Scroll Animation
+        function checkScrollAnimation() {
+            animatedElements.forEach(element => {
+                if (isElementInViewport(element)) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        // Check if Element is in Viewport
+        function isElementInViewport(el) {
+            const rect = el.getBoundingClientRect();
+            return (
+                rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.9 &&
+                rect.bottom >= 0
+            );
+        }
+
+        // Render Endpoints
+        function renderEndpoints() {
+            adminEndpointsTableBody.innerHTML = '';
+            
+            endpoints.forEach(endpoint => {
+                const row = document.createElement('tr');
+                row.className = 'fade-in';
+                
+                // Method badge class
+                let methodClass = '';
+                switch (endpoint.method) {
+                    case 'GET':
+                        methodClass = 'badge-success';
+                        break;
+                    case 'POST':
+                        methodClass = 'badge-primary';
+                        break;
+                    case 'PUT':
+                        methodClass = 'badge-warning';
+                        break;
+                    case 'DELETE':
+                        methodClass = 'badge-danger';
+                        break;
+                    default:
+                        methodClass = 'badge-info';
+                }
+                
+                row.innerHTML = `
+                    <td>${endpoint.id}</td>
+                    <td>${endpoint.name}</td>
+                    <td><span class="badge ${methodClass}">${endpoint.method}</span></td>
+                    <td>${endpoint.url}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" class="status-toggle" data-id="${endpoint.id}" ${endpoint.status === 'active' ? 'checked' : ''}>
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm edit-endpoint" data-id="${endpoint.id}">Edit</button>
+                        <button class="btn btn-danger btn-sm delete-endpoint" data-id="${endpoint.id}">Delete</button>
+                    </td>
+                `;
+                
+                adminEndpointsTableBody.appendChild(row);
+            });
+            
+            // Add event listeners to status toggles
+            document.querySelectorAll('.status-toggle').forEach(toggle => {
+                toggle.addEventListener('change', () => {
+                    const id = parseInt(toggle.getAttribute('data-id'));
+                    toggleEndpointStatus(id);
+                });
+            });
+            
+            // Add event listeners to edit buttons
+            document.querySelectorAll('.edit-endpoint').forEach(button => {
+                button.addEventListener('click', () => {
+                    const id = parseInt(button.getAttribute('data-id'));
+                    editEndpoint(id);
+                });
+            });
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-endpoint').forEach(button => {
+                button.addEventListener('click', () => {
+                    const id = parseInt(button.getAttribute('data-id'));
+                    deleteEndpoint(id);
+                });
+            });
+            
+            // Trigger animations for newly added elements
+            setTimeout(() => {
+                checkScrollAnimation();
+            }, 100);
+        }
+
+        // Render Endpoint Documentation
+        function renderEndpointDocs() {
+            endpointsDocsAccordion.innerHTML = '';
+            
+            endpoints.forEach(endpoint => {
+                // Method badge class
+                let methodClass = '';
+                switch (endpoint.method) {
+                    case 'GET':
+                        methodClass = 'badge-success';
+                        break;
+                    case 'POST':
+                        methodClass = 'badge-primary';
+                        break;
+                    case 'PUT':
+                        methodClass = 'badge-warning';
+                        break;
+                    case 'DELETE':
+                        methodClass = 'badge-danger';
+                        break;
+                    default:
+                        methodClass = 'badge-info';
+                }
+                
+                const accordionItem = document.createElement('div');
+                accordionItem.className = 'accordion-item fade-in';
+                
+                accordionItem.innerHTML = `
+                    <div class="accordion-header" data-id="${endpoint.id}">
+                        <div>
+                            <span class="badge ${methodClass}">${endpoint.method}</span>
+                            ${endpoint.name} - ${endpoint.url}
+                        </div>
+                        <span>▼</span>
+                    </div>
+                    <div class="accordion-content" id="accordion-content-${endpoint.id}">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <p>${endpoint.description || 'No description available.'}</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Example Request</label>
+                            <div class="code-block">${getExampleCode(endpoint)}</div>
+                        </div>
+                        
+                        <button class="btn btn-primary edit-doc-btn" data-id="${endpoint.id}">Edit Documentation</button>
+                    </div>
+                `;
+                
+                endpointsDocsAccordion.appendChild(accordionItem);
+            });
+            
+            // Add event listeners to accordion headers
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const id = header.getAttribute('data-id');
+                    const content = document.getElementById(`accordion-content-${id}`);
+                    
+                    if (content.classList.contains('active')) {
+                        content.classList.remove('active');
+                        header.querySelector('span:last-child').textContent = '▼';
+                    } else {
+                        content.classList.add('active');
+                        header.querySelector('span:last-child').textContent = '▲';
+                    }
+                });
+            });
+            
+            // Add event listeners to edit documentation buttons
+            document.querySelectorAll('.edit-doc-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const id = parseInt(button.getAttribute('data-id'));
+                    editDocumentation(id);
+                });
+            });
+            
+            // Trigger animations for newly added elements
+            setTimeout(() => {
+                checkScrollAnimation();
+            }, 100);
+        }
+
+        // Get Example Code
+        function getExampleCode(endpoint) {
+            if (endpoint.method === 'GET') {
+                return `fetch('${endpoint.url}')
+  .then(response => response.json())
+  .then(data => console.log(data));`;
+            } else {
+                return `fetch('${endpoint.url}', {
+  method: '${endpoint.method}',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    // request data here
+  })
+})
+  .then(response => response.json())
+  .then(data => console.log(data));`;
+            }
+        }
+
+        // Toggle Endpoint Status
+        function toggleEndpointStatus(id) {
+            const endpoint = endpoints.find(e => e.id === id);
+            if (endpoint) {
+                endpoint.status = endpoint.status === 'active' ? 'inactive' : 'active';
+                saveEndpoints();
+                
+                const statusText = endpoint.status === 'active' ? 'activated' : 'deactivated';
+                showNotification(`Endpoint "${endpoint.name}" has been ${statusText}.`, endpoint.status === 'active' ? 'success' : 'warning');
+            }
+        }
+
+        // Edit Endpoint
+        function editEndpoint(id) {
+            const endpoint = endpoints.find(e => e.id === id);
+            if (endpoint) {
+                editingEndpointId = id;
+                endpointIdInput.value = endpoint.id;
+                document.getElementById('admin-endpoint-name').value = endpoint.name;
+                document.getElementById('admin-endpoint-method').value = endpoint.method;
+                document.getElementById('admin-endpoint-url').value = endpoint.url;
+                document.getElementById('admin-endpoint-status').value = endpoint.status;
+                document.getElementById('admin-endpoint-description').value = endpoint.description || '';
+                
+                endpointModalTitle.textContent = 'Edit Endpoint';
+                adminEndpointModal.style.display = 'block';
+            }
+        }
+
+        // Reset Endpoint Form
+        function resetEndpointForm() {
+            adminEndpointForm.reset();
+            editingEndpointId = null;
+            endpointIdInput.value = '';
+        }
+
+        // Delete Endpoint
+        function deleteEndpoint(id) {
+            const endpoint = endpoints.find(e => e.id === id);
+            if (endpoint) {
+                const name = endpoint.name;
+                endpoints = endpoints.filter(e => e.id !== id);
+                saveEndpoints();
+                renderEndpoints();
+                renderEndpointDocs();
+                
+                showNotification(`Endpoint "${name}" has been deleted.`, 'error');
+            }
+        }
+
+        // Edit Documentation
+        function editDocumentation(id) {
+            const endpoint = endpoints.find(e => e.id === id);
+            if (endpoint) {
+                document.getElementById('doc-endpoint-id').value = endpoint.id;
+                document.getElementById('doc-description').value = endpoint.description || '';
+                
+                docEditModal.style.display = 'block';
+            }
+        }
+
+        // Save Endpoints to localStorage
+        function saveEndpoints() {
+            localStorage.setItem('endpoints', JSON.stringify(endpoints));
+        }
+
+        // Save Website Info to localStorage
+        function saveWebsiteInfo() {
+            localStorage.setItem('websiteInfo', JSON.stringify(websiteInfo));
+            updateAdminWebsiteName();
+        }
+
+        // Update Website Info Form
+        function updateWebsiteInfoForm() {
+            websiteNameInput.value = websiteInfo.name;
+            websiteDescriptionInput.value = websiteInfo.description;
+            websiteVersionInput.value = websiteInfo.version;
+            updateAdminWebsiteName();
+        }
+
+        // Update Admin Website Name
+        function updateAdminWebsiteName() {
+            if (adminWebsiteName) {
+                adminWebsiteName.textContent = `Admin Panel - ${websiteInfo.name}`;
+            }
+        }
+
+        // Show Notification
+        function showNotification(message, type) {
+            adminNotificationMessage.textContent = message;
+            
+            // Set notification color based on type
+            adminNotification.className = 'notification';
+            switch (type) {
+                case 'success':
+                    adminNotification.classList.add('notification-success');
+                    break;
+                case 'error':
+                    adminNotification.classList.add('notification-error');
+                    break;
+                case 'warning':
+                    adminNotification.classList.add('notification-warning');
+                    break;
+                default:
+                    adminNotification.classList.add('notification-info');
+            }
+            
+            adminNotification.style.display = 'block';
+            
+            // Auto hide after 3 seconds
+            setTimeout(() => {
+                adminNotification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Security Configuration
+        const SESSION_DURATION = 30 * 60 * 1000; // 30 minutes
+        const SESSION_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
+        const SESSION_WARNING_TIME = 5 * 60 * 1000; // 5 minutes before expiry
+        
+        // Session Variables
+        let sessionExpiryTime = 0;
+        let sessionTimerInterval = null;
+        let sessionRefreshTimeout = null;
+        let csrfToken = '';
+        
+        // DOM Elements
+        const securityAlert = document.getElementById('security-alert');
+        const securityAlertMessage = document.getElementById('security-alert-message');
+        const sessionTimerSpan = document.getElementById('session-timer');
+        const logoutButton = document.getElementById('logout-button');
+        
+        // Initialize Security Features
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check authentication before loading admin content
+            if (!checkAuthentication()) {
+                redirectToLogin();
+                return;
+            }
+            
+            // Setup security features
+            setupSecurityFeatures();
+            
+            // Continue with regular admin initialization
+            loadData();
+            setupEventListeners();
+            initScrollAnimation();
+        });
+        
+        // Setup Security Features
+        function setupSecurityFeatures() {
+            // Generate CSRF token for forms
+            generateCSRFToken();
+            
+            // Start session timer
+            startSessionTimer();
+            
+            // Setup session refresh
+            setupSessionRefresh();
+            
+            // Add logout event listener
+            logoutButton.addEventListener('click', logout);
+            
+            // Add security event listeners
+            addSecurityEventListeners();
+        }
+        
+        // Check Authentication
+        function checkAuthentication() {
+            const sessionData = JSON.parse(localStorage.getItem('adminSession') || 'null');
+            
+            if (!sessionData) {
+                return false;
+            }
+            
+            // Check if session has expired
+            if (sessionData.expires < Date.now()) {
+                // Session expired, clear it
+                localStorage.removeItem('adminSession');
+                return false;
+            }
+            
+            // Check if user agent matches (prevent session hijacking)
+            if (sessionData.userAgent !== navigator.userAgent) {
+                // Possible session hijacking attempt, clear session
+                localStorage.removeItem('adminSession');
+                showSecurityAlert('Possible session hijacking detected. Please login again.');
+                return false;
+            }
+            
+            // Set session expiry time for timer
+            sessionExpiryTime = sessionData.expires;
+            
+            return true;
+        }
+        
+        // Start Session Timer
+        function startSessionTimer() {
+            // Clear any existing timer
+            if (sessionTimerInterval) {
+                clearInterval(sessionTimerInterval);
+            }
+            
+            // Update timer immediately
+            updateSessionTimer();
+            
+            // Set interval to update timer every second
+            sessionTimerInterval = setInterval(updateSessionTimer, 1000);
+        }
+        
+        // Update Session Timer
+        function updateSessionTimer() {
+            const now = Date.now();
+            const timeRemaining = Math.max(0, sessionExpiryTime - now);
+            
+            // Format time remaining
+            const minutes = Math.floor(timeRemaining / 60000);
+            const seconds = Math.floor((timeRemaining % 60000) / 1000);
+            sessionTimerSpan.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Check if session is about to expire
+            if (timeRemaining > 0 && timeRemaining <= SESSION_WARNING_TIME) {
+                sessionTimerSpan.style.color = '#e53e3e';
+                
+                // Show warning if not already shown
+                if (!document.getElementById('session-warning')) {
+                    showSessionWarning();
+                }
+            }
+            
+            // Check if session has expired
+            if (timeRemaining <= 0) {
+                clearInterval(sessionTimerInterval);
+                logout();
+            }
+        }
+        
+        // Show Session Warning
+        function showSessionWarning() {
+            const warningDiv = document.createElement('div');
+            warningDiv.id = 'session-warning';
+            warningDiv.className = 'notification notification-warning';
+            warningDiv.style.display = 'block';
+            
+            warningDiv.innerHTML = `
+                <div class="notification-content">
+                    <span>Your session is about to expire. Would you like to extend it?</span>
+                </div>
+                <div style="margin-top: 10px; text-align: right;">
+                    <button id="extend-session-btn" class="btn btn-primary btn-sm">Extend Session</button>
+                    <button id="ignore-warning-btn" class="btn btn-secondary btn-sm" style="margin-left: 5px;">Ignore</button>
+                </div>
+                <button class="notification-close">&times;</button>
+            `;
+            
+            document.body.appendChild(warningDiv);
+            
+            // Add event listeners
+            document.getElementById('extend-session-btn').addEventListener('click', extendSession);
+            document.getElementById('ignore-warning-btn').addEventListener('click', () => {
+                warningDiv.remove();
+            });
+            document.querySelector('#session-warning .notification-close').addEventListener('click', () => {
+                warningDiv.remove();
+            });
+        }
+        
+        // Setup Session Refresh
+        function setupSessionRefresh() {
+            // Clear any existing timeout
+            if (sessionRefreshTimeout) {
+                clearTimeout(sessionRefreshTimeout);
+            }
+            
+            // Set timeout to refresh session
+            sessionRefreshTimeout = setTimeout(extendSession, SESSION_REFRESH_INTERVAL);
+        }
+        
+        // Extend Session
+        function extendSession() {
+            // Get current session data
+            const sessionData = JSON.parse(localStorage.getItem('adminSession') || 'null');
+            
+            if (!sessionData) {
+                redirectToLogin();
+                return;
+            }
+            
+            // Update expiration time
+            sessionData.expires = Date.now() + SESSION_DURATION;
+            
+            // Update session data
+            localStorage.setItem('adminSession', JSON.stringify(sessionData));
+            
+            // Update session expiry time for timer
+            sessionExpiryTime = sessionData.expires;
+            
+            // Reset session timer color
+            sessionTimerSpan.style.color = '';
+            
+            // Remove session warning if present
+            const sessionWarning = document.getElementById('session-warning');
+            if (sessionWarning) {
+                sessionWarning.remove();
+            }
+            
+            // Setup session refresh again
+            setupSessionRefresh();
+            
+            // Show notification
+            showNotification('Session extended successfully.', 'success');
+        }
+        
+        // Generate CSRF Token
+        function generateCSRFToken() {
+            const token = generateSecureToken(32);
+            csrfToken = token;
+            
+            // Store token in localStorage (in a real app, this would be stored server-side)
+            localStorage.setItem('adminCsrfToken', token);
+            
+            // Add token to all forms
+            addCsrfTokenToForms();
+        }
+        
+        // Add CSRF Token to Forms
+        function addCsrfTokenToForms() {
+            const forms = document.querySelectorAll('form');
+            
+            forms.forEach(form => {
+                // Check if form already has a CSRF token input
+                let tokenInput = form.querySelector('input[name="csrf_token"]');
+                
+                if (!tokenInput) {
+                    // Create token input
+                    tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = 'csrf_token';
+                    form.appendChild(tokenInput);
+                }
+                
+                // Set token value
+                tokenInput.value = csrfToken;
+            });
+        }
+        
+        // Verify CSRF Token
+        function verifyCSRFToken(formToken) {
+            return csrfToken && formToken && csrfToken === formToken;
+        }
+        
+        // Generate Secure Token
+        function generateSecureToken(length) {
+            const array = new Uint8Array(length);
+            window.crypto.getRandomValues(array);
+            
+            return Array.from(array)
+                .map(byte => byte.toString(16).padStart(2, '0'))
+                .join('');
+        }
+        
+        // Add Security Event Listeners
+        function addSecurityEventListeners() {
+            // Listen for storage events (detect session tampering)
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'adminSession') {
+                    // Check if session was modified externally
+                    if (!checkAuthentication()) {
+                        showSecurityAlert('Session was modified externally. Please login again.');
+                        setTimeout(redirectToLogin, 3000);
+                    }
+                }
+            });
+            
+            // Listen for visibility change (tab switching)
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    // Verify session when tab becomes visible again
+                    if (!checkAuthentication()) {
+                        redirectToLogin();
+                    }
+                }
+            });
+            
+            // Add form submission security
+            addFormSubmissionSecurity();
+        }
+        
+        // Add Form Submission Security
+        function addFormSubmissionSecurity() {
+            const forms = document.querySelectorAll('form');
+            
+            forms.forEach(form => {
+                // Add submit event listener to verify CSRF token
+                form.addEventListener('submit', (e) => {
+                    const formToken = form.querySelector('input[name="csrf_token"]')?.value;
+                    
+                    if (!verifyCSRFToken(formToken)) {
+                        e.preventDefault();
+                        showSecurityAlert('Security validation failed. Please refresh the page and try again.');
+                        return false;
+                    }
+                    
+                    // Sanitize form inputs
+                    const inputs = form.querySelectorAll('input, textarea, select');
+                    inputs.forEach(input => {
+                        if (input.type !== 'hidden' && input.type !== 'checkbox' && input.type !== 'radio') {
+                            input.value = sanitizeString(input.value);
+                        }
+                    });
+                });
+            });
+        }
+        
+        // Sanitize String (prevent XSS)
+        function sanitizeString(str) {
+            if (typeof str !== 'string') return str;
+            
+            // Replace potentially dangerous characters
+            return str.replace(/[<>&"']/g, function(c) {
+                return {
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '&': '&amp;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                }[c];
+            });
+        }
+        
+        // Show Security Alert
+        function showSecurityAlert(message) {
+            securityAlertMessage.textContent = message;
+            securityAlert.style.display = 'block';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                securityAlert.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Logout
+        function logout() {
+            // Clear session data
+            localStorage.removeItem('adminSession');
+            localStorage.removeItem('adminCsrfToken');
+            
+            // Redirect to login page
+            redirectToLogin();
+        }
+        
+        // Redirect to Login
+        function redirectToLogin() {
+            window.location.href = 'admin-login.html';
+        }
+        
+        // Override the existing endpoint form submission to include security checks
+        const originalAdminEndpointFormSubmit = adminEndpointForm.onsubmit;
+        adminEndpointForm.onsubmit = function(e) {
+            e.preventDefault();
+            
+            // Verify CSRF token
+            const formToken = this.querySelector('input[name="csrf_token"]')?.value;
+            if (!verifyCSRFToken(formToken)) {
+                showSecurityAlert('Security validation failed. Please refresh the page and try again.');
+                return false;
+            }
+            
+            // Sanitize inputs
+            const endpointName = sanitizeString(document.getElementById('admin-endpoint-name').value);
+            const endpointUrl = sanitizeString(document.getElementById('admin-endpoint-url').value);
+            const endpointDescription = sanitizeString(document.getElementById('admin-endpoint-description').value);
+            
+            // Update input values with sanitized versions
+            document.getElementById('admin-endpoint-name').value = endpointName;
+            document.getElementById('admin-endpoint-url').value = endpointUrl;
+            document.getElementById('admin-endpoint-description').value = endpointDescription;
+            
+            // Continue with original form submission logic
+            const formData = new FormData(adminEndpointForm);
+            const endpointData = {
+                name: formData.get('name'),
+                method: formData.get('method'),
+                url: formData.get('url'),
+                status: formData.get('status'),
+                description: formData.get('description')
+            };
+            
+            if (editingEndpointId) {
+                // Update existing endpoint
+                const index = endpoints.findIndex(e => e.id === editingEndpointId);
+                if (index !== -1) {
+                    endpointData.id = editingEndpointId;
+                    endpoints[index] = endpointData;
+                    showNotification(`Endpoint "${endpointData.name}" has been updated.`, 'success');
+                }
+            } else {
+                // Add new endpoint
+                endpointData.id = endpoints.length > 0 ? Math.max(...endpoints.map(e => e.id)) + 1 : 1;
+                endpoints.push(endpointData);
+                showNotification(`Endpoint "${endpointData.name}" has been added.`, 'success');
+            }
+            
+            saveEndpoints();
+            renderEndpoints();
+            renderEndpointDocs();
+            
+            adminEndpointModal.style.display = 'none';
+            editingEndpointId = null;
+        };
+        
+        // Override the existing documentation edit form submission
+        const originalDocEditFormSubmit = docEditForm.onsubmit;
+        docEditForm.onsubmit = function(e) {
+            e.preventDefault();
+            
+            // Verify CSRF token
+            const formToken = this.querySelector('input[name="csrf_token"]')?.value;
+            if (!verifyCSRFToken(formToken)) {
+                showSecurityAlert('Security validation failed. Please refresh the page and try again.');
+                return false;
+            }
+            
+            // Sanitize description
+            const description = sanitizeString(document.getElementById('doc-description').value);
+            document.getElementById('doc-description').value = description;
+            
+            // Continue with original form submission logic
+            const formData = new FormData(docEditForm);
+            const id = parseInt(formData.get('id'));
+            
+            const endpoint = endpoints.find(e => e.id === id);
+            if (endpoint) {
+                endpoint.description = description;
+                saveEndpoints();
+                renderEndpointDocs();
+                showNotification('Documentation has been updated.', 'success');
+            }
+            
+            docEditModal.style.display = 'none';
+        };
+        
+        // Override the existing website info form submission
+        const originalWebsiteInfoFormSubmit = websiteInfoForm.onsubmit;
+        websiteInfoForm.onsubmit = function(e) {
+            e.preventDefault();
+            
+            // Verify CSRF token
+            const formToken = this.querySelector('input[name="csrf_token"]')?.value;
+            if (!verifyCSRFToken(formToken)) {
+                showSecurityAlert('Security validation failed. Please refresh the page and try again.');
+                return false;
+            }
+            
+            // Sanitize inputs
+            const name = sanitizeString(websiteNameInput.value);
+            const description = sanitizeString(websiteDescriptionInput.value);
+            const version = sanitizeString(websiteVersionInput.value);
+            
+            // Update input values with sanitized versions
+            websiteNameInput.value = name;
+            websiteDescriptionInput.value = description;
+            websiteVersionInput.value = version;
+            
+            // Continue with original form submission logic
+            websiteInfo = {
+                name: name,
+                description: description,
+                version: version
+            };
+            
+            saveWebsiteInfo();
+            showNotification('Website information has been updated.', 'success');
+        };
+        
+        // Add CSRF token to forms when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add CSRF token to all forms
+            setTimeout(addCsrfTokenToForms, 500);
+        });
+    </script>
 </body>
 </html>
-<script>
-    // Admin panel functionality
-let config = JSON.parse(localStorage.getItem('apiManagerConfig')) || {
-    websiteName: 'API Manager',
-    apiBaseUrl: 'https://jsonplaceholder.typicode.com',
-    endpoints: []
-};
-
-// Initialize form
-function initForm() {
-    document.getElementById('website-name').value = config.websiteName;
-    document.getElementById('api-base-url').value = config.apiBaseUrl;
-    updateEndpointsList();
-}
-
-// Save configuration
-document.getElementById('config-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    config.websiteName = document.getElementById('website-name').value;
-    config.apiBaseUrl = document.getElementById('api-base-url').value;
-    saveConfig();
-    showNotification('Configuration saved successfully', 'success');
-});
-
-// Add new endpoint
-function addNewEndpoint() {
-    const endpoint = {
-        id: Date.now().toString(),
-        name: 'New Endpoint',
-        url: `${config.apiBaseUrl}/new-endpoint`,
-        method: 'GET',
-        status: 'Inactive'
-    };
-    config.endpoints.push(endpoint);
-    saveConfig();
-    updateEndpointsList();
-    showNotification('New endpoint added', 'success');
-}
-
-// Update endpoints list
-function updateEndpointsList() {
-    const container = document.getElementById('endpoints-manager');
-    container.innerHTML = '';
-
-    config.endpoints.forEach(endpoint => {
-        const endpointEl = document.createElement('div');
-        endpointEl.className = 'card bg-base-200 mb-4';
-        endpointEl.innerHTML = `
-            <div class="card-body">
-                <div class="flex items-center justify-between gap-4">
-                    <input type="text" value="${endpoint.name}" 
-                           class="input input-sm input-bordered w-1/3"
-                           onchange="updateEndpoint('${endpoint.id}', 'name', this.value)" />
-                    <input type="text" value="${endpoint.url}"
-                           class="input input-sm input-bordered w-1/2"
-                           onchange="updateEndpoint('${endpoint.id}', 'url', this.value)" />
-                    <select class="select select-sm select-bordered"
-                            onchange="updateEndpoint('${endpoint.id}', 'method', this.value)">
-                        ${['GET', 'POST', 'PUT', 'DELETE'].map(m => 
-                            `<option ${m === endpoint.method ? 'selected' : ''}>${m}</option>`
-                        ).join('')}
-                    </select>
-                    <button class="btn btn-error btn-sm" 
-                            onclick="deleteEndpoint('${endpoint.id}')">Delete</button>
-                </div>
-            </div>
-        `;
-        container.appendChild(endpointEl);
-    });
-}
-
-// Update endpoint
-function updateEndpoint(id, field, value) {
-    const endpoint = config.endpoints.find(e => e.id === id);
-    if (endpoint) {
-        endpoint[field] = value;
-        saveConfig();
-        showNotification('Endpoint updated', 'success');
-    }
-}
-
-// Delete endpoint
-function deleteEndpoint(id) {
-    config.endpoints = config.endpoints.filter(e => e.id !== id);
-    saveConfig();
-    updateEndpointsList();
-    showNotification('Endpoint deleted', 'warning');
-}
-
-// Save configuration
-function saveConfig() {
-    localStorage.setItem('apiManagerConfig', JSON.stringify(config));
-}
-
-// Show notification using Chakra UI
-function showNotification(message, type = 'info') {
-    // Wait for Chakra UI to be initialized
-    if (window.chakra && window.chakra.toast) {
-        window.chakra.toast({
-            title: message,
-            status: type,
-            duration: 3000,
-            isClosable: true,
-            position: 'top-right'
-        });
-    } else {
-        // Fallback to console log if Chakra UI is not available
-        console.log(`${type.toUpperCase()}: ${message}`);
-    }
-}
-
-// Initialize after Chakra UI is loaded
-window.addEventListener('load', () => {
-    // Initialize form after everything is loaded
-    initForm();
-});
-</script>
-<style>
-    /* Custom styles */
-.endpoint-card {
-    transition: all 0.3s ease;
-}
-
-.endpoint-card:hover {
-    transform: translateY(-2px);
-}
-
-/* Custom loading animation */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-/* Custom notification styles */
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    z-index: 1000;
-    animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-</style>
