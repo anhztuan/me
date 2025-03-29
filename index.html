@@ -3,167 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Endpoint Manager</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>API Management System</title>
+    
+    <!-- Chakra UI CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@chakra-ui/cdn@2.3.0/dist/chakra.min.js"></script>
+    
+    <!-- DaisyUI and Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <header class="navbar">
-        <div class="container">
-            <h1 id="website-name">API Endpoint Manager</h1>
-            <button class="btn btn-light" onclick="window.location.href='admin.html'">Admin Panel</button>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="container">
-        <h1 class="page-title">API Endpoint Management</h1>
-        <p id="website-description">Manage your API endpoints easily</p>
-
-        <!-- Tabs -->
-        <div class="tabs">
-            <div class="tab-header">
-                <div class="tab-item active" data-tab="endpoints">Endpoints</div>
-                <div class="tab-item" data-tab="documentation">Documentation</div>
-                <div class="tab-item" data-tab="settings">Settings</div>
-            </div>
-            
-            <div class="tab-content">
-                <!-- Endpoints Tab -->
-                <div class="tab-pane active" id="endpoints">
-                    <div class="tab-header-actions">
-                        <h2>API Endpoints</h2>
-                        <button class="btn btn-primary" id="add-endpoint-btn">Add New Endpoint</button>
-                    </div>
-                    
-                    <div id="endpoints-loading" class="loading-container">
-                        <div class="loading-spinner"></div>
-                    </div>
-                    
-                    <div id="endpoints-table-container" style="display: none;">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Method</th>
-                                    <th>URL</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="endpoints-table-body">
-                                <!-- Endpoints will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Documentation Tab -->
-                <div class="tab-pane" id="documentation">
-                    <h2>API Documentation</h2>
-                    <div class="card">
-                        <h3>How to Use the API Endpoint Manager</h3>
-                        <p>This application allows you to manage your API endpoints easily. Here's how to use it:</p>
-                        
-                        <h4>1. View Endpoints</h4>
-                        <p>All your API endpoints are listed in the Endpoints tab with their method, URL, and status.</p>
-                        
-                        <h4>2. Add New Endpoints</h4>
-                        <p>Click the "Add New Endpoint" button to create a new API endpoint. Fill in the required information.</p>
-                        
-                        <h4>3. Toggle Status</h4>
-                        <p>Click on the status badge to toggle between active and inactive states.</p>
-                        
-                        <h4>4. Delete Endpoints</h4>
-                        <p>Use the Delete button to remove an endpoint from the system.</p>
-                        
-                        <h4>5. Admin Panel</h4>
-                        <p>Access the Admin Panel to manage website information and perform advanced configurations.</p>
-                    </div>
-                </div>
-                
-                <!-- Settings Tab -->
-                <div class="tab-pane" id="settings">
-                    <h2>Settings</h2>
-                    <p>Configure your API endpoint manager settings here.</p>
-                    
-                    <div class="card">
-                        <h3>Website Information</h3>
-                        <p id="info-name">Name: API Endpoint Manager</p>
-                        <p id="info-description">Description: Manage your API endpoints easily</p>
-                        <p id="info-version">Version: 1.0.0</p>
-                        <p class="text-muted">To edit website information, please use the Admin Panel.</p>
-                    </div>
+    <nav class="bg-base-200 shadow-lg">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="text-xl font-bold">API Manager</div>
+                <div class="flex items-center space-x-4">
+                    <button class="btn btn-primary" onclick="showNotification('Welcome to API Manager!')">
+                        Notifications
+                    </button>
+                    <a href="admin.html" class="btn btn-secondary">Admin Panel</a>
                 </div>
             </div>
         </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- API Endpoints List -->
+            <div id="endpoints-list" class="space-y-4">
+                <!-- Endpoints will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="loading loading-spinner loading-lg"></div>
     </main>
-    
+
     <!-- Bottom Menu -->
-    <footer class="bottom-menu">
-        <div class="container">
-            <button class="menu-item">Dashboard</button>
-            <button class="menu-item">Endpoints</button>
-            <button class="menu-item">Documentation</button>
-            <button class="menu-item">Settings</button>
-        </div>
-    </footer>
-    
-    <!-- Add Endpoint Modal -->
-    <div class="modal" id="endpoint-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add New Endpoint</h2>
-                <span class="close-modal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="endpoint-form">
-                    <div class="form-group">
-                        <label for="endpoint-name">Endpoint Name <span class="required">*</span></label>
-                        <input type="text" id="endpoint-name" name="name" placeholder="e.g. Get Users" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="endpoint-method">Method <span class="required">*</span></label>
-                        <select id="endpoint-method" name="method" required>
-                            <option value="GET">GET</option>
-                            <option value="POST">POST</option>
-                            <option value="PUT">PUT</option>
-                            <option value="DELETE">DELETE</option>
-                            <option value="PATCH">PATCH</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="endpoint-url">URL <span class="required">*</span></label>
-                        <input type="text" id="endpoint-url" name="url" placeholder="e.g. /api/users" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="endpoint-status">Status</label>
-                        <select id="endpoint-status" name="status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                    
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Save</button>
-                        <button type="button" class="btn btn-secondary" id="cancel-endpoint">Cancel</button>
-                    </div>
-                </form>
-            </div>
+    <div class="fixed bottom-0 left-0 right-0 bg-base-200 p-4">
+        <div class="flex justify-center space-x-6">
+            <button class="btn btn-ghost" onclick="refreshEndpoints()">Refresh</button>
+            <button class="btn btn-ghost" onclick="showStats()">Statistics</button>
+            <button class="btn btn-ghost" onclick="showSettings()">Settings</button>
         </div>
     </div>
-    
-    <!-- Notification -->
-    <div class="notification" id="notification">
-        <div class="notification-content">
-            <span id="notification-message"></span>
-        </div>
-        <button class="notification-close">&times;</button>
-    </div>
-    
-    <script src="js/main.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
+<script>
+    // Configuration and state management
+let config = {
+    websiteName: 'API Manager',
+    apiBaseUrl: 'https://jsonplaceholder.typicode.com', // Using JSONPlaceholder for demo
+    endpoints: [
+        {
+            id: '1',
+            name: 'Get Users',
+            url: 'https://jsonplaceholder.typicode.com/users',
+            method: 'GET',
+            status: 'Inactive'
+        },
+        {
+            id: '2',
+            name: 'Get Posts',
+            url: 'https://jsonplaceholder.typicode.com/posts',
+            method: 'GET',
+            status: 'Inactive'
+        },
+        {
+            id: '3',
+            name: 'Get Comments',
+            url: 'https://jsonplaceholder.typicode.com/comments',
+            method: 'GET',
+            status: 'Inactive'
+        },
+        {
+            id: '4',
+            name: 'Create Post',
+            url: 'https://jsonplaceholder.typicode.com/posts',
+            method: 'POST',
+            status: 'Inactive'
+        },
+        {
+            id: '5',
+            name: 'Update Post',
+            url: 'https://jsonplaceholder.typicode.com/posts/1',
+            method: 'PUT',
+            status: 'Inactive'
+        }
+    ]
+};
+
+// Load configuration from localStorage
+function loadConfig() {
+    const savedConfig = localStorage.getItem('apiManagerConfig');
+    if (savedConfig) {
+        config = JSON.parse(savedConfig);
+    }
+    updateUI();
+}
+
+// Save configuration to localStorage
+function saveConfig() {
+    localStorage.setItem('apiManagerConfig', JSON.stringify(config));
+}
+
+// Show Chakra UI notification
+function showNotification(message, type = 'info') {
+    // Wait for Chakra UI to be initialized
+    if (window.chakra && window.chakra.toast) {
+        window.chakra.toast({
+            title: message,
+            status: type,
+            duration: 3000,
+            isClosable: true,
+            position: 'top-right'
+        });
+    } else {
+        // Fallback to console log if Chakra UI is not available
+        console.log(`${type.toUpperCase()}: ${message}`);
+    }
+}
+
+// Update UI with endpoints
+function updateUI() {
+    const endpointsList = document.getElementById('endpoints-list');
+    endpointsList.innerHTML = '';
+
+    config.endpoints.forEach(endpoint => {
+        const card = document.createElement('div');
+        card.className = 'card bg-base-100 shadow-xl endpoint-card';
+        card.innerHTML = `
+            <div class="card-body">
+                <h2 class="card-title">${endpoint.name}</h2>
+                <p class="text-sm text-gray-600">${endpoint.url}</p>
+                <div class="flex items-center gap-2 mt-2">
+                    <span class="badge badge-${endpoint.method === 'GET' ? 'info' : endpoint.method === 'POST' ? 'success' : 'warning'}">${endpoint.method}</span>
+                    <span class="badge badge-${endpoint.status === 'Active' ? 'success' : 'error'}">${endpoint.status}</span>
+                </div>
+                <div class="card-actions justify-end mt-4">
+                    <button class="btn btn-primary btn-sm" onclick="testEndpoint('${endpoint.id}')">
+                        Test
+                    </button>
+                </div>
+            </div>
+        `;
+        endpointsList.appendChild(card);
+    });
+}
+
+// Test endpoint
+async function testEndpoint(id) {
+    const endpoint = config.endpoints.find(e => e.id === id);
+    if (!endpoint) return;
+
+    showLoading();
+    try {
+        const response = await fetch(endpoint.url, {
+            method: endpoint.method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: endpoint.method !== 'GET' ? JSON.stringify({
+                title: 'Test Post',
+                body: 'This is a test post',
+                userId: 1
+            }) : undefined
+        });
+        
+        endpoint.status = response.ok ? 'Active' : 'Error';
+        showNotification(`Endpoint ${endpoint.name} tested successfully`, 'success');
+        
+        // Show response data
+        const data = await response.json();
+        console.log('Response:', data);
+    } catch (error) {
+        endpoint.status = 'Error';
+        showNotification(`Error testing endpoint ${endpoint.name}`, 'error');
+        console.error('Error:', error);
+    }
+    hideLoading();
+    saveConfig();
+    updateUI();
+}
+
+// Loading handlers
+function showLoading() {
+    document.getElementById('loading').style.display = 'flex';
+}
+
+function hideLoading() {
+    document.getElementById('loading').style.display = 'none';
+}
+
+// Bottom menu functions
+function refreshEndpoints() {
+    showLoading();
+    setTimeout(() => {
+        updateUI();
+        hideLoading();
+        showNotification('Endpoints refreshed', 'success');
+    }, 1000);
+}
+
+function showStats() {
+    const activeEndpoints = config.endpoints.filter(e => e.status === 'Active').length;
+    showNotification(`Active endpoints: ${activeEndpoints}/${config.endpoints.length}`, 'info');
+}
+
+function showSettings() {
+    window.location.href = 'admin.html';
+}
+
+// Initialize after Chakra UI is loaded
+window.addEventListener('load', () => {
+    loadConfig();
+    hideLoading();
+});
+</script>
