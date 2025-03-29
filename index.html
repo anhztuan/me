@@ -4,11 +4,272 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Tracker</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --text-light: #757575;
+            --bg-light: #f9f9f9;
+            --bg-dark: #2c2c2c;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-light);
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        .status-open {
+            background-color: #FFEB3B;
+            color: #333;
+        }
+        .status-in-progress {
+            background-color: #2196F3;
+            color: white;
+        }
+        .status-completed {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .progress-container {
+            margin-bottom: 15px;
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-value {
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.5s ease;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .btn-danger {
+            background-color: #f44336;
+            color: white;
+        }
+        .social-links {
+            display: flex;
+            gap: 10px;
+        }
+        .social-link {
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+        .social-link:hover {
+            color: var(--secondary-color);
+        }
+        .material-icons {
+            vertical-align: middle;
+        }
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        .task-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .priority {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+        .priority-high {
+            color: #f44336;
+        }
+        .priority-medium {
+            color: #ff9800;
+        }
+        .priority-low {
+            color: #4CAF50;
+        }
+        .tooltip {
+            position: relative;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 5px;
+            border-radius: 4px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        footer {
+            background: var(--bg-dark);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .footer-section {
+            flex: 1;
+            margin: 0 10px;
+        }
+        .footer-title {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            margin: 5px 0;
+        }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        .footer-bottom {
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            width: 500px;
+            max-width: 90%;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-control,
+        .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius);
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <section id="dashboard" class="animated fadeIn delay-1">
+        <section id="dashboard">
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">Ứng dụng Quản lý Học tập</div>
@@ -43,7 +304,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">API Documentation</div>
@@ -79,8 +339,7 @@
                 </div>
             </div>
         </section>
-
-        <section id="tasks" style="margin-top: 50px;" class="animated fadeIn delay-3">
+        <section id="tasks" style="margin-top: 50px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2>
                     <span class="material-icons">assignment</span>
@@ -91,13 +350,12 @@
                         <span class="material-icons">filter_list</span>
                         Lọc
                     </button>
-                    <button class="btn btn-primary">
+                    <button class="btn btn-primary" id="add-task-btn">
                         <span class="material-icons">add</span>
                         Công việc mới
                     </button>
                 </div>
             </div>
-
             <div class="tasks-list">
                 <div class="task-item">
                     <div class="task-title">
@@ -119,7 +377,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="task-item">
                     <div class="task-title">
                         <span class="material-icons">bug_report</span>
@@ -140,7 +397,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="task-item">
                     <div class="task-title">
                         <span class="material-icons">description</span>
@@ -163,7 +419,6 @@
                 </div>
             </div>
         </section>
-
         <!-- Modal - Add New Task -->
         <div class="modal" id="add-task-modal">
             <div class="modal-content">
@@ -211,7 +466,6 @@
             </div>
         </div>
     </div>
-
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -257,37 +511,30 @@
             </div>
         </div>
     </footer>
-
     <script>
         // Utility functions
         function formatNumber(num) {
             return num.toString().padStart(2, '0');
         }
-
         function updateDateTime() {
             const now = new Date();
             const formatted = `${now.getUTCFullYear()}-${formatNumber(now.getUTCMonth() + 1)}-${formatNumber(now.getUTCDate())} ${formatNumber(now.getUTCHours())}:${formatNumber(now.getUTCMinutes())}`;
             document.querySelector('.footer-bottom p').textContent = `© 2025 GitHub Projects Tracker. Last updated: ${formatted} UTC by @anhztuan`;
         }
-
         // Update time every second
         setInterval(updateDateTime, 1000);
-
         // Profile dropdown functionality
         const profileTrigger = document.getElementById('profile-trigger');
         const profileDropdown = document.getElementById('profile-dropdown');
-
-        profileTrigger.addEventListener('click', () => {
+        profileTrigger?.addEventListener('click', () => {
             profileDropdown.classList.toggle('active');
         });
-
         // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
-            if (!profileTrigger.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileDropdown.classList.remove('active');
+            if (!profileTrigger?.contains(e.target) && !profileDropdown?.contains(e.target)) {
+                profileDropdown?.classList.remove('active');
             }
         });
-
         // Modal functionality
         const modal = document.getElementById('add-task-modal');
         const addTaskBtn = document.getElementById('add-task-btn');
@@ -295,29 +542,24 @@
         const cancelTask = document.getElementById('cancel-task');
         const saveTask = document.getElementById('save-task');
         const addTaskForm = document.getElementById('add-task-form');
-
         function openModal() {
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
-
         function closeModalHandler() {
             modal.classList.remove('active');
             document.body.style.overflow = 'auto';
             addTaskForm.reset();
         }
-
         addTaskBtn.addEventListener('click', openModal);
         closeModal.addEventListener('click', closeModalHandler);
         cancelTask.addEventListener('click', closeModalHandler);
-
         // Close modal when clicking outside
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 closeModalHandler();
             }
         });
-
         // Handle form submission
         saveTask.addEventListener('click', (e) => {
             e.preventDefault();
@@ -330,17 +572,14 @@
                 addTaskForm.reportValidity();
             }
         });
-
         // Dashboard animations
         document.addEventListener('DOMContentLoaded', () => {
-            const dashboardGrid = document.getElementById('dashboard-grid');
+            const dashboardGrid = document.getElementById('dashboard');
             dashboardGrid.classList.add('fade-in');
-
             // Animate counters
             function animateCounter(element, target, duration = 2000) {
                 let start = 0;
                 const increment = target / (duration / 16);
-
                 function updateCounter() {
                     start += increment;
                     if (start >= target) {
@@ -350,48 +589,14 @@
                     element.textContent = Math.round(start);
                     requestAnimationFrame(updateCounter);
                 }
-
                 updateCounter();
             }
-
             // Initialize counters
             animateCounter(document.getElementById('study-hours'), 24);
             animateCounter(document.getElementById('total-tasks'), 15);
             animateCounter(document.getElementById('completed-tasks'), 8);
             animateCounter(document.getElementById('pending-tasks'), 7);
-
-            // Initialize progress bars
-            setTimeout(() => {
-                document.getElementById('study-progress').style.width = '75%';
-                document.getElementById('study-percentage').textContent = '75%';
-                document.getElementById('study-bar').style.width = '65%';
-                document.getElementById('rest-bar').style.width = '35%';
-                document.getElementById('task-progress').style.width = '53%';
-                document.getElementById('task-percentage').textContent = '53%';
-            }, 500);
         });
-
-        // Time tracking functionality
-        let isTracking = false;
-        const trackTimeBtn = document.getElementById('track-time-btn');
-
-        trackTimeBtn.addEventListener('click', () => {
-            isTracking = !isTracking;
-            if (isTracking) {
-                trackTimeBtn.innerHTML = `
-                    <span class="material-icons">stop</span>
-                    Dừng ghi nhận
-                `;
-                trackTimeBtn.classList.add('btn-danger');
-            } else {
-                trackTimeBtn.innerHTML = `
-                    <span class="material-icons">play_arrow</span>
-                    Bắt đầu ghi nhận
-                `;
-                trackTimeBtn.classList.remove('btn-danger');
-            }
-        });
-
         // Add smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -405,7 +610,6 @@
                 }
             });
         });
-
         // Add keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             // Alt + N to open new task modal
@@ -418,20 +622,16 @@
                 closeModalHandler();
             }
         });
-
         // Handle theme preference
         function setThemePreference() {
             const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
             document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
         }
-
         // Listen for system theme changes
         window.matchMedia('(prefers-color-scheme: dark)').addListener(setThemePreference);
-
         // Initialize tooltips
         document.querySelectorAll('.tooltip').forEach(tooltip => {
             const tooltipText = tooltip.querySelector('.tooltip-text');
-
             tooltip.addEventListener('mousemove', (e) => {
                 if (tooltipText) {
                     const viewportOffset = tooltipText.getBoundingClientRect();
