@@ -5,826 +5,221 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API Manager - Admin Panel</title>
     
-    <!-- React and ReactDOM -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Chakra UI CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@chakra-ui/cdn@2.3.0/dist/chakra.min.js"></script>
     
-    <!-- Babel for JSX transformation (THIS WAS MISSING) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- Chakra UI Dependencies -->
-    <script src="https://unpkg.com/@emotion/react@11/dist/emotion-react.production.min.js"></script>
-    <script src="https://unpkg.com/@emotion/styled@11/dist/emotion-styled.production.min.js"></script>
-    <script src="https://unpkg.com/framer-motion@6/dist/framer-motion.production.min.js"></script>
-    
-    <!-- Chakra UI -->
-    <script src="https://unpkg.com/@chakra-ui/react@2/dist/chakra-ui-react.production.min.js"></script>
-    
-    <!-- DaisyUI for loading animations -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.2/dist/full.css" rel="stylesheet" type="text/css" />
+    <!-- DaisyUI and Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body class="admin-theme">
-    <!-- Navigation Bar -->
-    <header class="navbar">
-        <div class="container">
-            <h1 id="admin-website-name">Admin Panel - API Endpoint Manager</h1>
-            <button class="btn btn-light" onclick="window.location.href='index.html'">Back to Main</button>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="container">
-        <h1 class="page-title">API Management Administration</h1>
-        
-        <!-- Tabs -->
-        <div class="tabs">
-            <div class="tab-header">
-                <div class="tab-item active" data-tab="endpoints">Endpoints</div>
-                <div class="tab-item" data-tab="website-settings">Website Settings</div>
-                <div class="tab-item" data-tab="api-docs">API Documentation</div>
-                <div class="tab-item" data-tab="system">System</div>
+<body>
+    <nav class="bg-base-200 shadow-lg">
+        <div class="container mx-auto px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="text-xl font-bold">Admin Panel</div>
+                <a href="index.html" class="btn btn-primary">Back to Dashboard</a>
             </div>
-            
-            <div class="tab-content">
-                <!-- Endpoints Tab -->
-                <div class="tab-pane active" id="endpoints">
-                    <div class="tab-header-actions">
-                        <h2>Manage API Endpoints</h2>
-                        <button class="btn btn-primary" id="admin-add-endpoint-btn">Add New Endpoint</button>
-                    </div>
-                    
-                    <div id="admin-endpoints-loading" class="loading-container">
-                        <div class="loading-spinner"></div>
-                    </div>
-                    
-                    <div id="admin-endpoints-table-container" style="display: none;">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Method</th>
-                                    <th>URL</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="admin-endpoints-table-body">
-                                <!-- Endpoints will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- API Configuration -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">Website Configuration</h2>
+                    <form id="config-form" class="space-y-4">
+                        <div class="form-control">
+                            <label class="label">Website Name</label>
+                            <input type="text" id="website-name" class="input input-bordered" />
+                        </div>
+                        <div class="form-control">
+                            <label class="label">API Base URL</label>
+                            <input type="text" id="api-base-url" class="input input-bordered" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
                 </div>
-                
-                <!-- Website Settings Tab -->
-                <div class="tab-pane" id="website-settings">
-                    <h2>Website Settings</h2>
-                    <div class="card">
-                        <form id="website-info-form">
-                            <div class="form-group">
-                                <label for="website-name">Website Name</label>
-                                <input type="text" id="website-name" name="name" value="API Endpoint Manager">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="website-description">Description</label>
-                                <textarea id="website-description" name="description">Manage your API endpoints easily</textarea>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="website-version">Version</label>
-                                <input type="text" id="website-version" name="version" value="1.0.0">
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                        </form>
+            </div>
+
+            <!-- Endpoint Management -->
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">Endpoint Management</h2>
+                    <div id="endpoints-manager" class="space-y-4">
+                        <!-- Endpoints will be loaded here -->
                     </div>
-                </div>
-                
-                <!-- API Documentation Tab -->
-                <div class="tab-pane" id="api-docs">
-                    <h2>API Documentation Management</h2>
-                    <div class="card">
-                        <p>Manage the documentation for your API endpoints. This information will be displayed to users.</p>
-                        
-                        <div class="accordion" id="endpoints-docs-accordion">
-                            <!-- Endpoint documentation items will be loaded here -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- System Tab -->
-                <div class="tab-pane" id="system">
-                    <h2>System Settings</h2>
-                    <div class="card">
-                        <p>Configure system-wide settings for your API management system.</p>
-                        
-                        <div class="form-group switch-group">
-                            <label for="notifications-switch">Enable Notifications</label>
-                            <label class="switch">
-                                <input type="checkbox" id="notifications-switch" checked>
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-                        
-                        <div class="form-group switch-group">
-                            <label for="auto-save-switch">Auto-save Changes</label>
-                            <label class="switch">
-                                <input type="checkbox" id="auto-save-switch">
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="backup-frequency">Data Backup Frequency</label>
-                            <select id="backup-frequency">
-                                <option value="hourly">Hourly</option>
-                                <option value="daily" selected>Daily</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly">Monthly</option>
-                            </select>
-                        </div>
-                        
-                        <button class="btn btn-primary" id="save-system-settings">Save Settings</button>
-                    </div>
+                    <button class="btn btn-secondary" onclick="addNewEndpoint()">Add New Endpoint</button>
                 </div>
             </div>
         </div>
     </main>
-    
-    <!-- Bottom Menu -->
-    <footer class="bottom-menu">
-        <div class="container">
-            <button class="menu-item">Endpoints</button>
-            <button class="menu-item">Settings</button>
-            <button class="menu-item">Documentation</button>
-            <button class="menu-item">System</button>
-        </div>
-    </footer>
-    
-    <!-- Endpoint Modal -->
-    <div class="modal" id="admin-endpoint-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="endpoint-modal-title">Add New Endpoint</h2>
-                <span class="close-modal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="admin-endpoint-form">
-                    <input type="hidden" id="endpoint-id" name="id">
-                    
-                    <div class="form-group">
-                        <label for="admin-endpoint-name">Endpoint Name <span class="required">*</span></label>
-                        <input type="text" id="admin-endpoint-name" name="name" placeholder="e.g. Get Users" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="admin-endpoint-method">Method <span class="required">*</span></label>
-                        <select id="admin-endpoint-method" name="method" required>
-                            <option value="GET">GET</option>
-                            <option value="POST">POST</option>
-                            <option value="PUT">PUT</option>
-                            <option value="DELETE">DELETE</option>
-                            <option value="PATCH">PATCH</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="admin-endpoint-url">URL <span class="required">*</span></label>
-                        <input type="text" id="admin-endpoint-url" name="url" placeholder="e.g. /api/users" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="admin-endpoint-status">Status</label>
-                        <select id="admin-endpoint-status" name="status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="admin-endpoint-description">Description</label>
-                        <textarea id="admin-endpoint-description" name="description" placeholder="Describe what this endpoint does"></textarea>
-                    </div>
-                    
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Save</button>
-                        <button type="button" class="btn btn-secondary" id="admin-cancel-endpoint">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Documentation Edit Modal -->
-    <div class="modal" id="doc-edit-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Edit Documentation</h2>
-                <span class="close-modal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="doc-edit-form">
-                    <input type="hidden" id="doc-endpoint-id" name="id">
-                    
-                    <div class="form-group">
-                        <label for="doc-description">Description</label>
-                        <textarea id="doc-description" name="description" placeholder="Describe what this endpoint does"></textarea>
-                    </div>
-                    
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Save Documentation</button>
-                        <button type="button" class="btn btn-secondary" id="cancel-doc-edit">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Notification -->
-    <div class="notification" id="admin-notification">
-        <div class="notification-content">
-            <span id="admin-notification-message"></span>
-        </div>
-        <button class="notification-close">&times;</button>
-    </div>
-    
-    <script src="js/admin.js"></script>
 
-    <script type="text/babel">
-        // Destructure Chakra UI components
-        const {
-            ChakraProvider,
-            Box,
-            Flex,
-            Heading,
-            Text,
-            Button,
-            Input,
-            Textarea,
-            Select,
-            Table,
-            Thead,
-            Tbody,
-            Tr,
-            Th,
-            Td,
-            Modal,
-            ModalOverlay,
-            ModalContent,
-            ModalHeader,
-            ModalFooter,
-            ModalBody,
-            ModalCloseButton,
-            useDisclosure,
-            FormControl,
-            FormLabel,
-            useToast,
-            Tabs,
-            TabList,
-            TabPanels,
-            Tab,
-            TabPanel,
-            Badge,
-            Switch,
-            Code,
-            Accordion,
-            AccordionItem,
-            AccordionButton,
-            AccordionPanel,
-            AccordionIcon,
-        } = ChakraUI;
-
-        const { useState, useEffect } = React;
-
-        // Admin App Component
-        function AdminApp() {
-            const [endpoints, setEndpoints] = useState([]);
-            const [websiteInfo, setWebsiteInfo] = useState({
-                name: 'API Endpoint Manager',
-                description: 'Manage your API endpoints easily',
-                version: '1.0.0'
-            });
-            const [isLoading, setIsLoading] = useState(true);
-            const [editingEndpoint, setEditingEndpoint] = useState(null);
-            const { isOpen, onOpen, onClose } = useDisclosure();
-            const toast = useToast();
-            
-            // Simulate loading data
-            useEffect(() => {
-                // Simulate API call to get endpoints
-                setTimeout(() => {
-                    const sampleEndpoints = [
-                        { id: 1, name: 'Get Users', method: 'GET', url: '/api/users', status: 'active', description: 'Retrieve all users' },
-                        { id: 2, name: 'Create User', method: 'POST', url: '/api/users', status: 'active', description: 'Create a new user' },
-                        { id: 3, name: 'Update User', method: 'PUT', url: '/api/users/:id', status: 'active', description: 'Update an existing user' },
-                        { id: 4, name: 'Delete User', method: 'DELETE', url: '/api/users/:id', status: 'inactive', description: 'Delete a user' },
-                        { id: 5, name: 'Get Products', method: 'GET', url: '/api/products', status: 'active', description: 'Retrieve all products' },
-                    ];
-                    setEndpoints(sampleEndpoints);
-                    setIsLoading(false);
-                }, 1500);
-                
-                // Get website info from localStorage or default
-                const storedInfo = localStorage.getItem('websiteInfo');
-                if (storedInfo) {
-                    setWebsiteInfo(JSON.parse(storedInfo));
-                }
-            }, []);
-            
-            // Save website info
-            const saveWebsiteInfo = () => {
-                localStorage.setItem('websiteInfo', JSON.stringify(websiteInfo));
-                toast({
-                    title: "Website information updated.",
-                    description: "Your changes have been saved successfully.",
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
-                });
-            };
-            
-            // Update website info
-            const updateWebsiteInfo = (field, value) => {
-                setWebsiteInfo({
-                    ...websiteInfo,
-                    [field]: value
-                });
-            };
-            
-            // Add new endpoint
-            const addEndpoint = (endpoint) => {
-                const newEndpoint = {
-                    id: endpoints.length + 1,
-                    ...endpoint
-                };
-                setEndpoints([...endpoints, newEndpoint]);
-                toast({
-                    title: "Endpoint added.",
-                    description: `${endpoint.name} has been added successfully.`,
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
-                });
-            };
-            
-            // Update endpoint
-            const updateEndpoint = (updatedEndpoint) => {
-                setEndpoints(endpoints.map(endpoint => 
-                    endpoint.id === updatedEndpoint.id ? updatedEndpoint : endpoint
-                ));
-                toast({
-                    title: "Endpoint updated.",
-                    description: `${updatedEndpoint.name} has been updated successfully.`,
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
-                });
-                setEditingEndpoint(null);
-            };
-            
-            // Delete endpoint
-            const deleteEndpoint = (id) => {
-                setEndpoints(endpoints.filter(endpoint => endpoint.id !== id));
-                toast({
-                    title: "Endpoint deleted.",
-                    description: "The endpoint has been deleted successfully.",
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
-            };
-            
-            // Toggle endpoint status
-            const toggleStatus = (id) => {
-                setEndpoints(endpoints.map(endpoint => {
-                    if (endpoint.id === id) {
-                        const newStatus = endpoint.status === 'active' ? 'inactive' : 'active';
-                        toast({
-                            title: `Endpoint ${newStatus}.`,
-                            description: `${endpoint.name} is now ${newStatus}.`,
-                            status: newStatus === 'active' ? "success" : "warning",
-                            duration: 3000,
-                            isClosable: true,
-                        });
-                        return { ...endpoint, status: newStatus };
-                    }
-                    return endpoint;
-                }));
-            };
-            
-            // Edit endpoint
-            const editEndpoint = (endpoint) => {
-                setEditingEndpoint(endpoint);
-                onOpen();
-            };
-            
-            // Go back to main page
-            const goToMain = () => {
-                window.location.href = 'index.html';
-            };
-
-            return (
-                <ChakraProvider>
-                    {/* Navigation Bar */}
-                    <Box bg="purple.600" color="white" px={4} py={3} shadow="md">
-                        <Flex justify="space-between" align="center">
-                            <Heading size="md">Admin Panel - {websiteInfo.name}</Heading>
-                            <Button colorScheme="whiteAlpha" size="sm" onClick={goToMain}>
-                                Back to Main
-                            </Button>
-                        </Flex>
-                    </Box>
-                    
-                    {/* Main Content */}
-                    <Box p={5}>
-                        <Heading size="lg" mb={4}>API Management Administration</Heading>
-                        
-                        {/* Tabs for different sections */}
-                        <Tabs variant="enclosed" colorScheme="purple" mt={4}>
-                            <TabList>
-                                <Tab>Endpoints</Tab>
-                                <Tab>Website Settings</Tab>
-                                <Tab>API Documentation</Tab>
-                                <Tab>System</Tab>
-                            </TabList>
-                            
-                            <TabPanels>
-                                {/* Endpoints Tab */}
-                                <TabPanel>
-                                    <Flex justify="space-between" align="center" mb={4}>
-                                        <Heading size="md">Manage API Endpoints</Heading>
-                                        <Button colorScheme="purple" onClick={() => {
-                                            setEditingEndpoint(null);
-                                            onOpen();
-                                        }}>Add New Endpoint</Button>
-                                    </Flex>
-                                    
-                                    {isLoading ? (
-                                        <Flex justify="center" align="center" height="200px">
-                                            <div className="loading loading-spinner loading-lg text-primary"></div>
-                                        </Flex>
-                                    ) : (
-                                        <Table variant="simple">
-                                            <Thead>
-                                                <Tr>
-                                                    <Th>ID</Th>
-                                                    <Th>Name</Th>
-                                                    <Th>Method</Th>
-                                                    <Th>URL</Th>
-                                                    <Th>Status</Th>
-                                                    <Th>Actions</Th>
-                                                </Tr>
-                                            </Thead>
-                                            <Tbody>
-                                                {endpoints.map(endpoint => (
-                                                    <Tr key={endpoint.id}>
-                                                        <Td>{endpoint.id}</Td>
-                                                        <Td>{endpoint.name}</Td>
-                                                        <Td>
-                                                            <Badge 
-                                                                colorScheme={
-                                                                    endpoint.method === 'GET' ? 'green' :
-                                                                    endpoint.method === 'POST' ? 'blue' :
-                                                                    endpoint.method === 'PUT' ? 'orange' : 'red'
-                                                                }
-                                                            >
-                                                                {endpoint.method}
-                                                            </Badge>
-                                                        </Td>
-                                                        <Td>{endpoint.url}</Td>
-                                                        <Td>
-                                                            <Switch 
-                                                                colorScheme="green" 
-                                                                isChecked={endpoint.status === 'active'} 
-                                                                onChange={() => toggleStatus(endpoint.id)}
-                                                            />
-                                                        </Td>
-                                                        <Td>
-                                                            <Button 
-                                                                size="sm" 
-                                                                colorScheme="blue" 
-                                                                mr={2}
-                                                                onClick={() => editEndpoint(endpoint)}
-                                                            >
-                                                                Edit
-                                                            </Button>
-                                                            <Button 
-                                                                size="sm" 
-                                                                colorScheme="red" 
-                                                                onClick={() => deleteEndpoint(endpoint.id)}
-                                                            >
-                                                                Delete
-                                                            </Button>
-                                                        </Td>
-                                                    </Tr>
-                                                ))}
-                                            </Tbody>
-                                        </Table>
-                                    )}
-                                </TabPanel>
-                                
-                                {/* Website Settings Tab */}
-                                <TabPanel>
-                                    <Heading size="md" mb={4}>Website Settings</Heading>
-                                    <Box p={5} border="1px" borderColor="gray.200" borderRadius="md">
-                                        <FormControl mb={4}>
-                                            <FormLabel>Website Name</FormLabel>
-                                            <Input 
-                                                value={websiteInfo.name} 
-                                                onChange={(e) => updateWebsiteInfo('name', e.target.value)}
-                                            />
-                                        </FormControl>
-                                        
-                                        <FormControl mb={4}>
-                                            <FormLabel>Description</FormLabel>
-                                            <Textarea 
-                                                value={websiteInfo.description} 
-                                                onChange={(e) => updateWebsiteInfo('description', e.target.value)}
-                                            />
-                                        </FormControl>
-                                        
-                                        <FormControl mb={4}>
-                                            <FormLabel>Version</FormLabel>
-                                            <Input 
-                                                value={websiteInfo.version} 
-                                                onChange={(e) => updateWebsiteInfo('version', e.target.value)}
-                                            />
-                                        </FormControl>
-                                        
-                                        <Button colorScheme="purple" onClick={saveWebsiteInfo}>
-                                            Save Changes
-                                        </Button>
-                                    </Box>
-                                </TabPanel>
-                                
-                                {/* API Documentation Tab */}
-                                <TabPanel>
-                                    <Heading size="md" mb={4}>API Documentation Management</Heading>
-                                    <Box p={5} border="1px" borderColor="gray.200" borderRadius="md">
-                                        <Text mb={4}>Manage the documentation for your API endpoints. This information will be displayed to users.</Text>
-                                        
-                                        <Accordion allowMultiple>
-                                            {endpoints.map(endpoint => (
-                                                <AccordionItem key={endpoint.id}>
-                                                    <h2>
-                                                        <AccordionButton>
-                                                            <Box flex="1" textAlign="left">
-                                                                <Badge 
-                                                                    colorScheme={
-                                                                        endpoint.method === 'GET' ? 'green' :
-                                                                        endpoint.method === 'POST' ? 'blue' :
-                                                                        endpoint.method === 'PUT' ? 'orange' : 'red'
-                                                                    }
-                                                                >
-                                                                    {endpoint.method}
-                                                                </Badge>
-                                                            </Box>
-                                                            <AccordionIcon />
-                                                        </AccordionButton>
-                                                    </h2>
-                                                    <AccordionPanel pb={4}>
-                                                        <FormControl mb={3}>
-                                                            <FormLabel>Description</FormLabel>
-                                                            <Textarea 
-                                                                value={endpoint.description || ''} 
-                                                                onChange={(e) => {
-                                                                    const updatedEndpoint = {
-                                                                        ...endpoint,
-                                                                        description: e.target.value
-                                                                    };
-                                                                    updateEndpoint(updatedEndpoint);
-                                                                }}
-                                                                placeholder="Describe what this endpoint does"
-                                                            />
-                                                        </FormControl>
-                                                        
-                                                        <FormControl mb={3}>
-                                                            <FormLabel>Example Request</FormLabel>
-                                                            <Code p={2} borderRadius="md" display="block" whiteSpace="pre">
-                                                                {endpoint.method === 'GET' ? 
-                                                                    `fetch('${endpoint.url}')
-  .then(response => response.json())
-  .then(data => console.log(data));` :
-                                                                    `fetch('${endpoint.url}', {
-  method: '${endpoint.method}',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    // request data here
-  })
-})
-  .then(response => response.json())
-  .then(data => console.log(data));`
-                                                                }
-                                                            </Code>
-                                                        </FormControl>
-                                                        
-                                                        <Button 
-                                                            colorScheme="purple" 
-                                                            size="sm"
-                                                            onClick={() => {
-                                                                toast({
-                                                                    title: "Documentation saved.",
-                                                                    description: "The documentation has been updated.",
-                                                                    status: "success",
-                                                                    duration: 3000,
-                                                                    isClosable: true,
-                                                                });
-                                                            }}
-                                                        >
-                                                            Save Documentation
-                                                        </Button>
-                                                    </AccordionPanel>
-                                                </AccordionItem>
-                                            ))}
-                                        </Accordion>
-                                    </Box>
-                                </TabPanel>
-                                
-                                {/* System Tab */}
-                                <TabPanel>
-                                    <Heading size="md" mb={4}>System Settings</Heading>
-                                    <Box p={5} border="1px" borderColor="gray.200" borderRadius="md">
-                                        <Text mb={4}>Configure system-wide settings for your API management system.</Text>
-                                        
-                                        <FormControl display="flex" alignItems="center" mb={4}>
-                                            <FormLabel htmlFor="notifications" mb="0">
-                                                Enable Notifications
-                                            </FormLabel>
-                                            <Switch id="notifications" colorScheme="purple" defaultChecked />
-                                        </FormControl>
-                                        
-                                        <FormControl display="flex" alignItems="center" mb={4}>
-                                            <FormLabel htmlFor="auto-save" mb="0">
-                                                Auto-save Changes
-                                            </FormLabel>
-                                            <Switch id="auto-save" colorScheme="purple" />
-                                        </FormControl>
-                                        
-                                        <FormControl mb={4}>
-                                            <FormLabel>Data Backup Frequency</FormLabel>
-                                            <Select defaultValue="daily">
-                                                <option value="hourly">Hourly</option>
-                                                <option value="daily">Daily</option>
-                                                <option value="weekly">Weekly</option>
-                                                <option value="monthly">Monthly</option>
-                                            </Select>
-                                        </FormControl>
-                                        
-                                        <Button 
-                                            colorScheme="purple" 
-                                            onClick={() => {
-                                                toast({
-                                                    title: "Settings saved.",
-                                                    description: "Your system settings have been updated.",
-                                                    status: "success",
-                                                    duration: 3000,
-                                                isClosable: true,
-                                                });
-                                            }}
-                                        >
-                                            Save Settings
-                                        </Button>
-                                    </Box>
-                                </TabPanel>
-                            </TabPanels>
-                        </Tabs>
-                    </Box>
-                    
-                    {/* Bottom Menu */}
-                    <Box position="fixed" bottom="0" width="100%" bg="purple.600" color="white" py={3}>
-                        <Flex justify="center" align="center">
-                            <Button variant="ghost" colorScheme="whiteAlpha" mx={2}>Endpoints</Button>
-                            <Button variant="ghost" colorScheme="whiteAlpha" mx={2}>Settings</Button>
-                            <Button variant="ghost" colorScheme="whiteAlpha" mx={2}>Documentation</Button>
-                            <Button variant="ghost" colorScheme="whiteAlpha" mx={2}>System</Button>
-                        </Flex>
-                    </Box>
-                    
-                    {/* Endpoint Modal */}
-                    <Modal isOpen={isOpen} onClose={onClose} size="lg">
-                        <ModalOverlay />
-                        <ModalContent>
-                            <ModalHeader>
-                                {editingEndpoint ? 'Edit Endpoint' : 'Add New Endpoint'}
-                            </ModalHeader>
-                            <ModalCloseButton />
-                            <EndpointForm 
-                                endpoint={editingEndpoint} 
-                                onSubmit={(endpoint) => {
-                                    if (editingEndpoint) {
-                                        updateEndpoint(endpoint);
-                                    } else {
-                                        addEndpoint(endpoint);
-                                    }
-                                    onClose();
-                                }} 
-                            />
-                        </ModalContent>
-                    </Modal>
-                </ChakraProvider>
-            );
-        }
-        
-        // Endpoint Form Component
-        function EndpointForm({ endpoint, onSubmit }) {
-            const [formData, setFormData] = useState(
-                endpoint || {
-                    name: '',
-                    method: 'GET',
-                    url: '',
-                    status: 'active',
-                    description: ''
-                }
-            );
-            
-            const handleChange = (e) => {
-                const { name, value } = e.target;
-                setFormData({
-                    ...formData,
-                    [name]: value
-                });
-            };
-            
-            const handleSubmit = (e) => {
-                e.preventDefault();
-                onSubmit(formData);
-            };
-            
-            return (
-                <form onSubmit={handleSubmit}>
-                    <ModalBody>
-                        <FormControl mb={3} isRequired>
-                            <FormLabel>Endpoint Name</FormLabel>
-                            <Input 
-                                name="name" 
-                                value={formData.name} 
-                                onChange={handleChange} 
-                                placeholder="e.g. Get Users"
-                            />
-                        </FormControl>
-                        
-                        <FormControl mb={3} isRequired>
-                            <FormLabel>Method</FormLabel>
-                            <Select name="method" value={formData.method} onChange={handleChange}>
-                                <option value="GET">GET</option>
-                                <option value="POST">POST</option>
-                                <option value="PUT">PUT</option>
-                                <option value="DELETE">DELETE</option>
-                                <option value="PATCH">PATCH</option>
-                            </Select>
-                        </FormControl>
-                        
-                        <FormControl mb={3} isRequired>
-                            <FormLabel>URL</FormLabel>
-                            <Input 
-                                name="url" 
-                                value={formData.url} 
-                                onChange={handleChange} 
-                                placeholder="e.g. /api/users"
-                            />
-                        </FormControl>
-                        
-                        <FormControl mb={3}>
-                            <FormLabel>Status</FormLabel>
-                            <Select name="status" value={formData.status} onChange={handleChange}>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </Select>
-                        </FormControl>
-                        
-                        <FormControl mb={3}>
-                            <FormLabel>Description</FormLabel>
-                            <Textarea 
-                                name="description" 
-                                value={formData.description} 
-                                onChange={handleChange} 
-                                placeholder="Describe what this endpoint does"
-                            />
-                        </FormControl>
-                    </ModalBody>
-                    
-                    <ModalFooter>
-                        <Button colorScheme="purple" mr={3} type="submit">
-                            Save
-                        </Button>
-                        <Button variant="ghost" onClick={() => onSubmit(null)}>Cancel</Button>
-                    </ModalFooter>
-                </form>
-            );
-        }
-        
-        // Render the Admin App
-        const root = ReactDOM.createRoot(document.getElementById('admin-app'));
-        root.render(<AdminApp />);
-    </script>
-    
-    <script src="js/admin.js"></script>
+    <script src="admin.js"></script>
 </body>
 </html>
+<script>
+    // Admin panel functionality
+let config = JSON.parse(localStorage.getItem('apiManagerConfig')) || {
+    websiteName: 'API Manager',
+    apiBaseUrl: 'https://jsonplaceholder.typicode.com',
+    endpoints: []
+};
+
+// Initialize form
+function initForm() {
+    document.getElementById('website-name').value = config.websiteName;
+    document.getElementById('api-base-url').value = config.apiBaseUrl;
+    updateEndpointsList();
+}
+
+// Save configuration
+document.getElementById('config-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    config.websiteName = document.getElementById('website-name').value;
+    config.apiBaseUrl = document.getElementById('api-base-url').value;
+    saveConfig();
+    showNotification('Configuration saved successfully', 'success');
+});
+
+// Add new endpoint
+function addNewEndpoint() {
+    const endpoint = {
+        id: Date.now().toString(),
+        name: 'New Endpoint',
+        url: `${config.apiBaseUrl}/new-endpoint`,
+        method: 'GET',
+        status: 'Inactive'
+    };
+    config.endpoints.push(endpoint);
+    saveConfig();
+    updateEndpointsList();
+    showNotification('New endpoint added', 'success');
+}
+
+// Update endpoints list
+function updateEndpointsList() {
+    const container = document.getElementById('endpoints-manager');
+    container.innerHTML = '';
+
+    config.endpoints.forEach(endpoint => {
+        const endpointEl = document.createElement('div');
+        endpointEl.className = 'card bg-base-200 mb-4';
+        endpointEl.innerHTML = `
+            <div class="card-body">
+                <div class="flex items-center justify-between gap-4">
+                    <input type="text" value="${endpoint.name}" 
+                           class="input input-sm input-bordered w-1/3"
+                           onchange="updateEndpoint('${endpoint.id}', 'name', this.value)" />
+                    <input type="text" value="${endpoint.url}"
+                           class="input input-sm input-bordered w-1/2"
+                           onchange="updateEndpoint('${endpoint.id}', 'url', this.value)" />
+                    <select class="select select-sm select-bordered"
+                            onchange="updateEndpoint('${endpoint.id}', 'method', this.value)">
+                        ${['GET', 'POST', 'PUT', 'DELETE'].map(m => 
+                            `<option ${m === endpoint.method ? 'selected' : ''}>${m}</option>`
+                        ).join('')}
+                    </select>
+                    <button class="btn btn-error btn-sm" 
+                            onclick="deleteEndpoint('${endpoint.id}')">Delete</button>
+                </div>
+            </div>
+        `;
+        container.appendChild(endpointEl);
+    });
+}
+
+// Update endpoint
+function updateEndpoint(id, field, value) {
+    const endpoint = config.endpoints.find(e => e.id === id);
+    if (endpoint) {
+        endpoint[field] = value;
+        saveConfig();
+        showNotification('Endpoint updated', 'success');
+    }
+}
+
+// Delete endpoint
+function deleteEndpoint(id) {
+    config.endpoints = config.endpoints.filter(e => e.id !== id);
+    saveConfig();
+    updateEndpointsList();
+    showNotification('Endpoint deleted', 'warning');
+}
+
+// Save configuration
+function saveConfig() {
+    localStorage.setItem('apiManagerConfig', JSON.stringify(config));
+}
+
+// Show notification using Chakra UI
+function showNotification(message, type = 'info') {
+    // Wait for Chakra UI to be initialized
+    if (window.chakra && window.chakra.toast) {
+        window.chakra.toast({
+            title: message,
+            status: type,
+            duration: 3000,
+            isClosable: true,
+            position: 'top-right'
+        });
+    } else {
+        // Fallback to console log if Chakra UI is not available
+        console.log(`${type.toUpperCase()}: ${message}`);
+    }
+}
+
+// Initialize after Chakra UI is loaded
+window.addEventListener('load', () => {
+    // Initialize form after everything is loaded
+    initForm();
+});
+</script>
+<style>
+    /* Custom styles */
+.endpoint-card {
+    transition: all 0.3s ease;
+}
+
+.endpoint-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Custom loading animation */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Custom notification styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+</style>
