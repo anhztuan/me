@@ -251,7 +251,8 @@
             right: 20px;
             padding: 16px;
             border-radius: 12px;
-            background: white;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
@@ -261,6 +262,7 @@
             z-index: 1000;
             min-width: 300px;
             max-width: 400px;
+            color: white; /* Set text color to white */
         }
 
         .notification.success {
@@ -286,7 +288,7 @@
 
         .notification-message {
             font-size: 0.9rem;
-            color: #666;
+            color: white; /* Ensure message text is white */
         }
 
         /* API Details Styles */
@@ -356,6 +358,28 @@
             border-color: rgba(255, 255, 255, 0.2);
             background: rgba(255, 255, 255, 0.15);
         }
+
+        /* Shiny Text Animation */
+        @keyframes shiny {
+            0% { background-position: -200%; }
+            100% { background-position: 200%; }
+        }
+
+        .animate-shiny {
+            background-size: 400%;
+            animation: shiny 3s linear infinite;
+        }
+
+        /* Shiny Gold Text Animation */
+        @keyframes shiny-gold {
+            0% { background-position: -200%; }
+            100% { background-position: 200%; }
+        }
+
+        .animate-shiny-gold {
+            background-size: 400%;
+            animation: shiny-gold 3s linear infinite;
+        }
     </style>
 </head>
 <body>
@@ -389,15 +413,64 @@
                 <h1 class="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent" 
                     id="mainHeading">
                     Kevin's APIs
+                    <sup class="text-xs font-medium ml-1 px-1 rounded bg-gradient-to-r from-yellow-400 to-yellow-600 text-white animate-shiny-gold">
+                        beta.0.1
+                    </sup>
                 </h1>
             </header>
+
+            <!-- Overview Section -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-semibold mb-4">API Overview</h2>
+                <div class="bg-gray-100 p-4 rounded shadow">
+                    <p><strong>Framework:</strong> FastAPI (version 0.1.0)</p>
+                    <p><strong>OpenAPI File:</strong> <a href="/openapi.json" class="text-blue-500 underline">/openapi.json</a></p>
+                    <p><strong>Example Endpoint:</strong> <code>/items/{item_id}</code></p>
+                    <p><strong>Method:</strong> <span class="text-green-600 font-semibold">GET</span></p>
+                    <p><strong>Description:</strong> Read Item GET</p>
+                </div>
+            </section>
+
+            <!-- Endpoint Details Section -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-semibold mb-4">Endpoint Details</h2>
+                <div class="bg-gray-100 p-4 rounded shadow">
+                    <h3 class="text-lg font-semibold mb-2">Parameters</h3>
+                    <ul class="list-disc pl-5">
+                        <li>
+                            <strong>item_id</strong> (required, integer): 
+                            <span class="text-red-500">required</span> - Path parameter.
+                        </li>
+                        <li>
+                            <strong>q</strong> (optional, string): Query parameter.
+                        </li>
+                    </ul>
+                    <h3 class="text-lg font-semibold mt-4 mb-2">Responses</h3>
+                    <ul class="list-disc pl-5">
+                        <li>
+                            <strong>200 (Success):</strong> 
+                            <pre class="bg-gray-200 p-2 rounded mt-1">
+{
+  "detail": "",
+  "loc": "",
+  "string": ""
+}
+                            </pre>
+                        </li>
+                        <li>
+                            <strong>422 (Validation Error):</strong> 
+                            <span>Occurs when input parameters are invalid.</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
 
             <!-- Dark Mode Toggle -->
             <div class="fixed top-20 right-4">
                 <button class="btn" id="darkModeToggle">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 9.003 0 008.354-5.646z">
                         </path>
                     </svg>
                 </button>
@@ -429,8 +502,7 @@
         // Update DateTime
         function updateDateTime() {
             const now = new Date();
-            const formatted = `Current Date and Time (UTC - YYYY-MM-DD HH:MM:SS formatted): ${
-                now.getUTCFullYear()}-${
+            const formatted = `${now.getUTCFullYear()}-${
                 String(now.getUTCMonth() + 1).padStart(2, '0')}-${
                 String(now.getUTCDate()).padStart(2, '0')} ${
                 String(now.getUTCHours()).padStart(2, '0')}:${
@@ -449,16 +521,16 @@
             const loadingPage = document.getElementById('loadingPage');
             const mainContent = document.getElementById('mainContent');
             
-            const loadingTexts = ['Loading', 'Loading.', 'Loading..', 'Loading...'];
+            const loadingTexts = 'Loading...'.split('');
             let currentTextIndex = 0;
 
             function updateLoadingText() {
                 const textElement = document.querySelector('.loading-text');
-                textElement.textContent = loadingTexts[currentTextIndex];
+                textElement.textContent = loadingTexts.slice(0, currentTextIndex + 1).join('');
                 currentTextIndex = (currentTextIndex + 1) % loadingTexts.length;
             }
 
-            const textInterval = setInterval(updateLoadingText, 500);
+            const textInterval = setInterval(updateLoadingText, 200);
 
             progressBarFill.style.width = '100%';
 
@@ -489,6 +561,20 @@
                     },
                     headers: {
                         'Content-Type': 'application/json'
+                    },
+                    responses: {
+                        200: {
+                            description: 'Success',
+                            example: {
+                                token: 'string'
+                            }
+                        },
+                        422: {
+                            description: 'Validation Error',
+                            example: {
+                                detail: 'Invalid input'
+                            }
+                        }
                     }
                 },
                 {
@@ -499,6 +585,22 @@
                     url: '/api/v1/user/profile',
                     headers: {
                         'Authorization': 'Bearer <token>'
+                    },
+                    responses: {
+                        200: {
+                            description: 'Success',
+                            example: {
+                                id: 1,
+                                name: 'John Doe',
+                                email: 'john.doe@example.com'
+                            }
+                        },
+                        401: {
+                            description: 'Unauthorized',
+                            example: {
+                                detail: 'Invalid token'
+                            }
+                        }
                     }
                 }
             ];
@@ -518,10 +620,28 @@
                         </button>
                         
                         <div class="api-details" id="details-${index}">
-                            <pre>URL: ${api.url}
-Method: ${api.method}
-Headers: ${JSON.stringify(api.headers, null, 2)}
-${api.params ? `Parameters: ${JSON.stringify(api.params, null, 2)}` : ''}</pre>
+                            <h4 class="font-semibold mt-2">Endpoint:</h4>
+                            <pre>${api.url}</pre>
+                            
+                            <h4 class="font-semibold mt-2">Method:</h4>
+                            <pre>${api.method}</pre>
+                            
+                            <h4 class="font-semibold mt-2">Headers:</h4>
+                            <pre>${JSON.stringify(api.headers, null, 2)}</pre>
+                            
+                            ${api.params ? `
+                            <h4 class="font-semibold mt-2">Parameters:</h4>
+                            <pre>${JSON.stringify(api.params, null, 2)}</pre>` : ''}
+                            
+                            <h4 class="font-semibold mt-2">Responses:</h4>
+                            <ul class="list-disc pl-5">
+                                ${Object.entries(api.responses).map(([status, response]) => `
+                                    <li>
+                                        <strong>${status} (${response.description}):</strong>
+                                        <pre>${JSON.stringify(response.example, null, 2)}</pre>
+                                    </li>
+                                `).join('')}
+                            </ul>
                         </div>
                     </div>
                     
